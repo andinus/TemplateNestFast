@@ -1,0 +1,20 @@
+{
+    "name" : "Template::Nest::Fast",
+    "auth" : "zef:andinus",
+    "version" : "0.1.0",
+    "description" : "Template::Nest::Fast is a high-performance template engine module for Raku",
+    "authors" : [ "Andinus <andinus@nand.sh>" ],
+    "license" : "ISC",
+    "perl" : "6.d",
+    "provides" : {
+        "Template::Nest::Fast" : "lib/Template/Nest/Fast.rakumod"
+    },
+    "depends" : [ ],
+    "build-depends" : [ ],
+    "test-depends" : [ ],
+    "resources" : [ ],
+    "tags": [
+        "template", "Template::Nest"
+    ],
+    "source-url" : "https://github.com/andinus/TemplateNestFast"
+}

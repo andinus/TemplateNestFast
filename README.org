@@ -1,0 +1,28 @@
+#+title: Template::Nest::Fast
+#+subtitle: manipulate a generic template structure via a Raku hash
+#+export_file_name: index
+#+options: toc:1
+#+setupfile: ~/.emacs.d/org-templates/projects.org
+
+| Source          | https://git.unfla.me/TemplateNestFast       |
+| GitHub (mirror) | https://github.com/andinus/TemplateNestFast |
+
+* Documentation
+
+~Template::Nest::Fast~ is a high-performance template engine module for
+Raku, designed to process nested templates quickly and efficiently.
+This module improves on the original ~Template::Nest~ module by caching
+the index of positions of variables, resulting in significantly faster
+processing times.
+
+** Implementation
+
+
+
+** Options
+
+* News
+
+** v0.1.0 - 2023-03-28
+
++ Initial Release.

@@ -1,0 +1,3 @@
+*.raku linguist-language=Raku
+*.rakumod linguist-language=Rak
+*.rakutest linguist-language=Raku

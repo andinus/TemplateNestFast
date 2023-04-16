@@ -12,7 +12,7 @@ class Template::Nest::Fast {
     has %!templates;
 
     #| TWEAK reads all the files in template-dir ending with '.html'
-    #| extension and compiles them.
+    #| extension and indexes them.
     submethod TWEAK() {
         # Grab all files ending with .html recursively.
         my IO @stack = $!template-dir, ;
@@ -24,11 +24,11 @@ class Template::Nest::Fast {
         }
 
         # Render all the files.
-        self.compile($_) for @templates;
+        self.index($_) for @templates;
     }
 
-    #| compile reads a template and prepares it for render.
-    method compile(IO $template) {
+    #| index reads a template and prepares it for render.
+    method index(IO $template) {
         # Get template name relative to $!template-dir and remove
         # `.html` extension.
         my Str $t = $template.relative($!template-dir).substr(0, *-5);
@@ -88,10 +88,10 @@ class Template::Nest::Fast {
         # we need to recalculate it, that is stored in this var.
         my int $delta = 0;
 
-        with (%!templates{%t{$!name-label}}) -> %t-compiled {
-            $rendered = %t-compiled<path>.slurp;
+        with (%!templates{%t{$!name-label}}) -> %t-indexed {
+            $rendered = %t-indexed<path>.slurp;
 
-            for @(%t-compiled<vars>) -> %v {
+            for @(%t-indexed<vars>) -> %v {
                 die "Variable {%v<name>} not defined." without %t{%v<name>};
 
                 # Replace the template variable.

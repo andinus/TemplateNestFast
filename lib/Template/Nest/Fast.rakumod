@@ -92,7 +92,7 @@ class Template::Nest::Fast {
             $rendered = %t-compiled<path>.slurp;
 
             for @(%t-compiled<vars>) -> %v {
-                die "Variable {%v<name>} not defined." unless %t{%v<name>};
+                die "Variable {%v<name>} not defined." without %t{%v<name>};
 
                 # Replace the template variable.
                 with self.parse(%t{%v<name>}) -> $append {

@@ -1,11 +1,5 @@
 #+title: Template::Nest::Fast
 #+subtitle: manipulate a generic template structure via a Raku hash
-#+export_file_name: index
-#+options: toc:1
-#+setupfile: ~/.emacs.d/org-templates/projects.org
-
-| Source          | https://git.unfla.me/TemplateNestFast       |
-| GitHub (mirror) | https://github.com/andinus/TemplateNestFast |
 
 * Documentation
 

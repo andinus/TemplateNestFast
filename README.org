@@ -9,6 +9,97 @@ This module improves on the original ~Template::Nest~ module by caching
 the index of positions of variables, resulting in significantly faster
 processing times.
 
+For more details on ~Template::Nest~ visit:
+https://metacpan.org/pod/Template::Nest
+
+Note: This module was created by me as a proof-of-concept to benchmark
+against ~Template::Nest::XS~. Tom Gracey (virtual.blue) is currently
+sponsoring for the development of this module. He authored
+~Template::Nest~ originally in Perl 5.
+
+Note: This module is currently a work in-progress. The goal is to have
+100% compatibility with ~Template::Nest~ (Raku).
+
+** Options
+
+These options can be passed when creating the object.
+
+- ~name-label~: Represents the label used for identifying the template
+  name in the hash of template variables. Default value is ~TEMPLATE~.
+
+- ~template-dir~: IO object representing the directory where the
+  templates are located.
+
+** Methods
+
+- ~render~: Converts a template structure to output text. See Example
+  for details.
+
+** Example
+
+This is a simple example that injects a variable in a template. We use
+another template as a component as well.
+
+#+begin_src raku
+use Template::Nest::Fast;
+
+# Create a nest object.
+my $nest = Template::Nest::Fast.new( template-dir => 'templates/'.IO );
+
+# Declare template structure.
+my %simple-page = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        TEMPLATE => '01-simple-component',
+        variable => 'Simple Variable in Simple Component'
+    )
+);
+
+# Render the page.
+put $nest.render(%simple-page);
+#+end_src
+
+Templates:
+~templates/00-simple-page.html~:
+#+begin_src html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simple Page</title>
+  </head>
+  <body>
+    <p>A fairly simple page to test the performance of Template::Nest.</p>
+    <p><!--% variable %--></p>
+    <!--% simple_component %-->
+  </body>
+</html>
+#+end_src
+
+~templates/01-simple-component.html~:
+#+begin_src html
+<p><!--% variable %--></p>
+#+end_src
+
+Output:
+#+begin_src html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simple Page</title>
+  </head>
+  <body>
+    <p>A fairly simple page to test the performance of Template::Nest.</p>
+    <p>Simple Variable</p>
+    <p>Simple Variable in Simple Component</p>
+  </body>
+</html>
+#+end_src
+
 * News
 
 ** v0.1.0 - 2023-03-28

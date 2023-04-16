@@ -54,11 +54,8 @@ class Template::Nest::Fast {
                 # %!templates.
                 push %!templates{$t}<vars>, %(
                     name => ($m[1].Str),
-                    start-delim => ($m[0].from, $m[0].to),
-                    variable    => ($m[1].from, $m[1].to),
-                    end-delim   => ($m[2].from, $m[2].to),
-                    # Length of the string to replace.
-                    length      => ($m[2].to - $m[0].from),
+                    start-pos => $m[0].from, # replace from.
+                    length      => ($m[2].to - $m[0].from), # length to replace.
                 );
             }
         }
@@ -96,7 +93,7 @@ class Template::Nest::Fast {
 
                 # Replace the template variable.
                 with self.parse(%t{%v<name>}) -> $append {
-                    $rendered.substr-rw(%v<start-delim>[0] + $delta, %v<length>) = $append;
+                    $rendered.substr-rw(%v<start-pos> + $delta, %v<length>) = $append;
 
                     # From delta remove %v<length> and add the length
                     # of string we just appended.

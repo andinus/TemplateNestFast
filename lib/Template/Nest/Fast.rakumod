@@ -53,9 +53,9 @@ class Template::Nest::Fast {
                 # Store each variable alongside it's template file in
                 # %!templates.
                 push %!templates{$t}<vars>, %(
-                    name => ($m[1].Str),
+                    name      => $m[1].Str,
                     start-pos => $m[0].from, # replace from.
-                    length      => ($m[2].to - $m[0].from), # length to replace.
+                    length    => ($m[2].to - $m[0].from), # length to replace.
                 );
             }
         }

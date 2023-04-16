@@ -22,10 +22,8 @@ Note: This module is currently a work in-progress. The goal is to have
 
 ** Options
 
-These options can be passed when creating the object.
-
-- ~name-label~: Represents the label used for identifying the template
-  name in the hash of template variables. Default value is ~TEMPLATE~.
+- ~name-label~ (default ~TEMPLATE~): Represents the label used for
+  identifying the template name in the hash of template variables.
 
 - ~template-dir~: IO object representing the directory where the
   templates are located.

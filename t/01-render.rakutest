@@ -1,0 +1,33 @@
+use Test;
+use Template::Nest::Fast;
+
+plan 1;
+
+my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
+my $nest = Template::Nest::Fast.new( :$template-dir );
+
+my %simple-page = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        TEMPLATE => '01-simple-component',
+        variable => 'Simple Variable in Simple Component'
+    )
+);
+
+is $nest.render(%simple-page), q:to/END/;
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="utf-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+       <title>Simple Page</title>
+     </head>
+     <body>
+       <p>A fairly simple page to test the performance of Template::Nest.</p>
+       <p>Simple Variable</p>
+       <p>Simple Variable in Simple Component</p>
+
+     </body>
+   </html>
+   END

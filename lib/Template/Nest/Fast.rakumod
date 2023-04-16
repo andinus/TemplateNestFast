@@ -8,6 +8,11 @@ class Template::Nest::Fast {
     has Str $!name-label = 'TEMPLATE';
     has IO $.template-dir is required;
 
+    # If True, then an attempt to populate a template with a variable
+    # that doesn't exist (i.e. name not found in template) results in
+    # an error.
+    has Bool $.die-on-bad-params = True;
+
     # Template objects after compilation.
     has %!templates;
 
@@ -90,10 +95,29 @@ class Template::Nest::Fast {
             # Read the file.
             $rendered = %t-indexed<path>.slurp;
 
+            # Check for bad-params if $!die-on-bad-params is set to
+            # true. Here we check if the number of defined variables
+            # are the same. If they are then we assume that all params
+            # in template hash is valid.
+            #
+            # It may be the case that the number of params in template
+            # hash is same as number of params in template file but
+            # the params in hash are not valid. In that case we will
+            # catch those in the for loop. Because we mandate that all
+            # variables in the files be substituted.
+            unless (%t-indexed<vars>.elems == (%t.keys.elems - 1)) or not $!die-on-bad-params {
+                die qq:to/END/;
+                Variables in template hash: {%t.keys.grep(* ne $!name-label).sort.gist}
+                Variables in template file: {%t-indexed<vars>.map(*<name>).sort.gist}
+                die-on-bad-params value: {$!die-on-bad-params}
+                All variables in template hash must be valid if die-on-bad-params is True.
+                END
+            }
+
             # Loop over indexed variables, if a variable is not
             # defined in the template hash then we don't proceed.
             for @(%t-indexed<vars>) -> %v {
-                die "Variable {%v<name>} not defined." without %t{%v<name>};
+                die "Variable {%v<name>} not defined." unless %t{%v<name>}:exists;
 
                 # Replace the template variable.
                 with self!parse(%t{%v<name>}) -> $append {

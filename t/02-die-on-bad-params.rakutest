@@ -1,0 +1,38 @@
+use Test;
+use Template::Nest::Fast;
+
+plan 4;
+
+my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
+my $nest = Template::Nest::Fast.new( :$template-dir );
+my $nest-bad = Template::Nest::Fast.new( :$template-dir, die-on-bad-params => False );
+
+my %simple-page = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        TEMPLATE => '01-simple-component',
+        variable => 'Simple Variable in Simple Component'
+    )
+);
+
+my %simple-page-bad-params = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => 'Simple Component',
+    bad_param => 'Bad Param'
+);
+
+# Testing with a bad parameter but with same number of keys as
+# %simple-page.
+my %simple-page-bad-params-more = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    bad_param => 'Simple Component',
+);
+
+dies-ok { $nest.render(%simple-page-bad-params) }, "Dies on bad params by default.";
+
+dies-ok { $nest-bad.render(%simple-page-bad-params-more) }, "Dies on bad params.";
+lives-ok { $nest-bad.render(%simple-page) }, "Lives on good params.";
+lives-ok { $nest-bad.render(%simple-page-bad-params) }, "Lives on bad params if `die-on-bad-params' is False.";

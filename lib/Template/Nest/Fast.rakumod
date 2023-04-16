@@ -74,7 +74,7 @@ class Template::Nest::Fast {
     #| keys where the value is another Hash or a List.
     method parse($var --> Str) {
         given $var {
-            when Str  { return $var }
+            when Str  { return $var.Str }
             when Hash { return self.render($var) }
             when List { return $var.map({self.render($_)}).join }
         }

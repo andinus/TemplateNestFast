@@ -5,7 +5,7 @@
 #| significantly faster processing times.
 class Template::Nest::Fast {
     # has Str @!token-delims = ['<!--%', '%-->'];
-    has Str $!name-label = 'TEMPLATE';
+    has Str $.name-label = 'TEMPLATE';
     has IO $.template-dir is required;
 
     # If True, then an attempt to populate a template with a variable

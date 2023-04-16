@@ -24,11 +24,11 @@ class Template::Nest::Fast {
         }
 
         # Render all the files.
-        self.index($_) for @templates;
+        self!index-template($_) for @templates;
     }
 
-    #| index reads a template and prepares it for render.
-    method index(IO $template) {
+    #| index-template reads a template and prepares it for render.
+    method !index-template(IO $template) {
         # Get template name relative to $!template-dir and remove
         # `.html` extension.
         my Str $t = $template.relative($!template-dir).substr(0, *-5);
@@ -69,7 +69,7 @@ class Template::Nest::Fast {
     #|
     #| parse here consumes 'xyz' and returns 'hi', it can also handle
     #| keys where the value is another Hash or a List.
-    method parse($var --> Str) {
+    method !parse($var --> Str) {
         given $var {
             when Str  { return $var.Str }
             when Hash { return self.render($var) }
@@ -85,14 +85,18 @@ class Template::Nest::Fast {
         # we need to recalculate it, that is stored in this var.
         my int $delta = 0;
 
+        # Get the indexed version of the template in %t-indexed.
         with (%!templates{%t{$!name-label}}) -> %t-indexed {
+            # Read the file.
             $rendered = %t-indexed<path>.slurp;
 
+            # Loop over indexed variables, if a variable is not
+            # defined in the template hash then we don't proceed.
             for @(%t-indexed<vars>) -> %v {
                 die "Variable {%v<name>} not defined." without %t{%v<name>};
 
                 # Replace the template variable.
-                with self.parse(%t{%v<name>}) -> $append {
+                with self!parse(%t{%v<name>}) -> $append {
                     $rendered.substr-rw(%v<start-pos> + $delta, %v<length>) = $append;
 
                     # From delta remove %v<length> and add the length

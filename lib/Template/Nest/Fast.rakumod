@@ -63,6 +63,11 @@ class Template::Nest::Fast {
                     length    => ($m[2].to - $m[0].from), # length to replace.
                 );
             }
+
+            # Store template keys as unordered set. We need this later
+            # to verify if template hash has all the required
+            # variables.
+            %!templates{$t}<keys> = Set.new( %!templates{$t}<vars>.map(*<name>) );
         }
     }
 

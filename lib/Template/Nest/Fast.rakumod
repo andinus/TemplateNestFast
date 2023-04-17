@@ -125,14 +125,17 @@ class Template::Nest::Fast {
             for @(%t-indexed<vars>) -> %v {
                 die "Variable {%v<name>} not defined." unless %t{%v<name>}:exists;
 
+                # For variables that are not defined in template hash,
+                # replace them with empty string.
+                my Str $append = (%t{%v<name>}:exists)
+                                     ?? self!parse(%t{%v<name>})
+                                     !! '';
                 # Replace the template variable.
-                with self!parse(%t{%v<name>}) -> $append {
-                    $rendered.substr-rw(%v<start-pos> + $delta, %v<length>) = $append;
+                $rendered.substr-rw(%v<start-pos> + $delta, %v<length>) = $append;
 
-                    # From delta remove %v<length> and add the length
-                    # of string we just appended.
-                    $delta += - %v<length> + $append.chars;
-                }
+                # From delta remove %v<length> and add the length
+                # of string we just appended.
+                $delta += - %v<length> + $append.chars;
             }
         } else {
             die "Unrecognized template: {%t{$!name-label}}.";

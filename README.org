@@ -30,8 +30,12 @@ Note: This module is currently a work in-progress. The goal is to have
 
 - ~die-on-bad-params~ (default: ~True~): If True, then an attempt to
   populate a template with a variable that doesn't exist (i.e. name
-  not found in template) results in an error. Note that it always dies
-  if any variable in template file is not present in template hash.
+  not found in template file) results in an error.
+
+  Note that it allows to leave variables undefined (i.e. name found in
+  template file but not defined in template hash). Undefined variables
+  are replaced with empty string. This is for compatibility with
+  Template::Nest (Raku).
 
 ** Methods
 

@@ -8,6 +8,14 @@ class Template::Nest::Fast {
     has Str $.name-label = 'TEMPLATE';
     has IO $.template-dir is required;
 
+    # If True, add comment to the rendered output to make it easier to
+    # identify which template the output is from.
+    has Bool $.show-labels = False;
+
+    # Used in conjuction with $.show-labels. If the template is not
+    # HTML then this can be used to change output label.
+    has Str @.comment-delims = ['<!--', '-->'];
+
     # If True, then an attempt to populate a template with a variable
     # that doesn't exist (i.e. name not found in template) results in
     # an error.
@@ -133,6 +141,18 @@ class Template::Nest::Fast {
         } else {
             die "Unrecognized template: {%t{$!name-label}}.";
         }
+
+        # Add labels to the rendered string if $!show-labels is True.
+        if $!show-labels {
+            $rendered.substr-rw(0, 0) = "%s BEGIN %s %s\n".sprintf(
+                @!comment-delims[0], %t{$!name-label}, @!comment-delims[1]
+            );
+
+            $rendered.substr-rw($rendered.chars, 0) = "%s END %s %s\n".sprintf(
+                @!comment-delims[0], %t{$!name-label}, @!comment-delims[1]
+            );
+        }
+
         return $rendered;
     }
 }

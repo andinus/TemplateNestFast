@@ -1,5 +1,16 @@
 use Test;
+use Template::Nest::Fast;
 
-plan 1;
+plan 7;
+
+my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
+my $nest = Template::Nest::Fast.new( :$template-dir );
 
 use-ok 'Template::Nest::Fast';
+
+for qw[
+    new template-dir show-labels comment-delims die-on-bad-params
+    name-label
+] -> $method {
+    can-ok $nest, $method, "Can $method";
+}

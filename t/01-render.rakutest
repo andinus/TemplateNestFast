@@ -77,7 +77,7 @@ is(
 );
 
 # check if returned HTML is a string.
-is $nest.render(%simple-page).WHAT, Str, "Rendered HTML is a string.";
+isa-ok $nest.render(%simple-page), Str, "Rendered HTML is a string.";
 
 # render test with complex template hash.
 is(

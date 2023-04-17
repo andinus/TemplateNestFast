@@ -111,10 +111,10 @@ class Template::Nest::Fast {
             # the params in hash are not valid. In that case we will
             # catch those in the for loop. Because we mandate that all
             # variables in the files be substituted.
-            unless (%t-indexed<vars>.elems == (%t.keys.elems - 1)) or not $!die-on-bad-params {
+            if $!die-on-bad-params && (%t.keys (-) %t-indexed<keys>) !(==) $!name-label {
                 die qq:to/END/;
                 Variables in template hash: {%t.keys.grep(* ne $!name-label).sort.gist}
-                Variables in template file: {%t-indexed<vars>.map(*<name>).sort.gist}
+                Variables in template file: {%t-indexed<keys>.sort.gist}
                 die-on-bad-params value: {$!die-on-bad-params}
                 All variables in template hash must be valid if die-on-bad-params is True.
                 END
@@ -123,8 +123,6 @@ class Template::Nest::Fast {
             # Loop over indexed variables, if a variable is not
             # defined in the template hash then we don't proceed.
             for @(%t-indexed<vars>) -> %v {
-                die "Variable {%v<name>} not defined." unless %t{%v<name>}:exists;
-
                 # For variables that are not defined in template hash,
                 # replace them with empty string.
                 my Str $append = (%t{%v<name>}:exists)

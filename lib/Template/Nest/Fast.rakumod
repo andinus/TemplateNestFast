@@ -102,15 +102,8 @@ class Template::Nest::Fast {
             $rendered = %t-indexed<path>.slurp;
 
             # Check for bad-params if $!die-on-bad-params is set to
-            # true. Here we check if the number of defined variables
-            # are the same. If they are then we assume that all params
-            # in template hash is valid.
-            #
-            # It may be the case that the number of params in template
-            # hash is same as number of params in template file but
-            # the params in hash are not valid. In that case we will
-            # catch those in the for loop. Because we mandate that all
-            # variables in the files be substituted.
+            # true. We check if the keys in template hash are all
+            # present in template file except for the $!name-label.
             if $!die-on-bad-params && (%t.keys (-) %t-indexed<keys>) !(==) $!name-label {
                 die qq:to/END/;
                 Variables in template hash: {%t.keys.grep(* ne $!name-label).sort.gist}

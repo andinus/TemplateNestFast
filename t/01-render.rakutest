@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 6;
+plan 7;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
@@ -110,12 +110,14 @@ my %invalid-page-more = %(
     )
 );
 
-dies-ok(
-    { $nest.render(%invalid-page) },
-    "Dies with invalid template hash (i.e. without name label)."
+throws-like(
+    { $nest.render(%invalid-page) }, Exception,
+    "Dies with invalid template hash (i.e. without name label).",
+    message => /^"Invalid template, no name-label: " .*/
 );
 
-dies-ok(
-    { $nest.render(%invalid-page) },
-    "Dies with invalid template hash (i.e. without name label) that is nested."
+throws-like(
+    { $nest.render(%invalid-page-more) }, Exception,
+    "Dies with invalid template hash (i.e. without name label) that is nested.",
+    message => /^"Invalid template, no name-label: " .*/
 );

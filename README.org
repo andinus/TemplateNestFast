@@ -43,7 +43,7 @@ Note: This module is currently a work in-progress. The goal is to have
   when you have many templates.
 
   Example:
-  #+begin_src
+  #+begin_src html
 <!-- BEGIN 00-simple-page -->
 <!DOCTYPE html>
 <html lang="en">
@@ -80,7 +80,7 @@ my $nest-alt = Template::Nest::Fast.new(
   #+end_src
 
   Example output:
-  #+begin_src
+  #+begin_src js
 /* BEGIN js-file */
 ...
 /* END js-file */
@@ -97,7 +97,7 @@ my $nest-alt = Template::Nest::Fast.new(
   #+end_src
 
   Example output:
-  #+begin_src
+  #+begin_src raku
 # BEGIN raku-file
 ...
 # END raku-file */

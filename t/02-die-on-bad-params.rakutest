@@ -32,7 +32,7 @@ my %simple-page-bad-params-more = %(
 );
 
 dies-ok { $nest.render(%simple-page-bad-params) }, "Dies on bad params by default.";
+dies-ok { $nest.render(%simple-page-bad-params-more) }, "Dies on bad params with same number of keys.";
 
-dies-ok { $nest-bad.render(%simple-page-bad-params-more) }, "Dies on bad params.";
 lives-ok { $nest-bad.render(%simple-page) }, "Lives on good params.";
 lives-ok { $nest-bad.render(%simple-page-bad-params) }, "Lives on bad params if `die-on-bad-params' is False.";

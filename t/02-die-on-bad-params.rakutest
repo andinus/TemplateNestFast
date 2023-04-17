@@ -31,8 +31,16 @@ my %simple-page-bad-params-more = %(
     bad_param => 'Simple Component',
 );
 
-dies-ok { $nest.render(%simple-page-bad-params) }, "Dies on bad params by default.";
-dies-ok { $nest.render(%simple-page-bad-params-more) }, "Dies on bad params with same number of keys.";
+throws-like(
+    { $nest.render(%simple-page-bad-params) }, Exception,
+    "Dies on bad params by default.",
+    message => /"All variables in template hash must be valid if die-on-bad-params is True"/
+);
+throws-like(
+    { $nest.render(%simple-page-bad-params-more) }, Exception,
+    "Dies on bad params with same number of keys.",
+    message => /"All variables in template hash must be valid if die-on-bad-params is True"/
+);
 
 lives-ok { $nest-bad.render(%simple-page) }, "Lives on good params.";
 lives-ok { $nest-bad.render(%simple-page-bad-params) }, "Lives on bad params if `die-on-bad-params' is False.";

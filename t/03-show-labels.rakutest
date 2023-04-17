@@ -1,11 +1,15 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 1;
+plan 2;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
+
 my $nest = Template::Nest::Fast.new( :$template-dir, :show-labels );
+my $nest-alt = Template::Nest::Fast.new( # checking if alt delim works.
+    :$template-dir, :show-labels, comment-delims => ['<!--!', '!-->']
+);
 
 my %simple-page = %(
     TEMPLATE => '00-simple-page',
@@ -21,4 +25,10 @@ is(
     $nest.render(%simple-page),
     $output-dir.add('04-simple-page-with-labels.html').slurp,
     "Simple template is rendered with show-labels = True."
+);
+
+is(
+    $nest-alt.render(%simple-page),
+    $output-dir.add('05-simple-page-with-labels-alt-delims.html').slurp,
+    "Simple template is rendered with show-labels = True and alternate comment delims."
 );

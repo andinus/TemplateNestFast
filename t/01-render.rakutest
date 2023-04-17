@@ -15,7 +15,8 @@ my %simple-page = %(
     )
 );
 
-is $nest.render(%simple-page), q:to/END/;
+# render test with simple string, template substitution.
+is $nest.render(%simple-page), q:to/END/, "Simple template is rendered.";
    <!DOCTYPE html>
    <html lang="en">
      <head>

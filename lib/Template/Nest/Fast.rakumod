@@ -77,9 +77,9 @@ class Template::Nest::Fast {
     method !parse($var --> Str) {
         given $var {
             when Str  { return $var.Str }
-            # trim trailing when substituting a hash.
+            # trim-trailing to account for files ending on new line.
             when Hash { return self.render($var).trim-trailing }
-            when List { return $var.map({self.render($_)}).join }
+            when List { return $var.map({self.render($_).trim-trailing}).join }
         }
     }
 

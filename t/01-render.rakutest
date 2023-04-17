@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 7;
+plan 8;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
@@ -75,6 +75,25 @@ is(
     $output-dir.add('01-simple-page.html').slurp,
     "Simple template is rendered."
 );
+
+# render test with simple string, template substitution and different
+# name-label.
+with Template::Nest::Fast.new(:$template-dir, :name-label<NAME>) -> $nest-alt {
+    is(
+        $nest-alt.render(
+            %(
+                NAME => '00-simple-page',
+                variable => 'Simple Variable',
+                simple_component => %(
+                    NAME => '01-simple-component',
+                    variable => 'Simple Variable in Simple Component'
+                )
+            )
+        ),
+        $output-dir.add('01-simple-page.html').slurp,
+        "Simple template is rendered."
+    );
+}
 
 # check if returned HTML is a string.
 isa-ok $nest.render(%simple-page), Str, "Rendered HTML is a string.";

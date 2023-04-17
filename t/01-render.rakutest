@@ -17,18 +17,17 @@ my %simple-page = %(
 
 # render test with simple string, template substitution.
 is $nest.render(%simple-page), q:to/END/, "Simple template is rendered.";
-   <!DOCTYPE html>
-   <html lang="en">
-     <head>
-       <meta charset="utf-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1">
-       <title>Simple Page</title>
-     </head>
-     <body>
-       <p>A fairly simple page to test the performance of Template::Nest.</p>
-       <p>Simple Variable</p>
-       <p>Simple Variable in Simple Component</p>
-
-     </body>
-   </html>
-   END
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simple Page</title>
+  </head>
+  <body>
+    <p>A fairly simple page to test the performance of Template::Nest.</p>
+    <p>Simple Variable</p>
+    <p>Simple Variable in Simple Component</p>
+  </body>
+</html>
+END

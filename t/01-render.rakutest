@@ -1,11 +1,20 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 2;
+plan 3;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 my $nest = Template::Nest::Fast.new( :$template-dir );
+
+my %incomplete-page = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        TEMPLATE => '01-simple-component',
+        # empty.
+    )
+);
 
 my %simple-page = %(
     TEMPLATE => '00-simple-page',
@@ -72,4 +81,12 @@ is(
     $nest.render(%complex-page),
     $output-dir.add('02-complex-page.html').slurp,
     "Complex template is rendered."
+);
+
+# render test with a template hash that does not have all the
+# variables from template file.
+is(
+    $nest.render(%incomplete-page),
+    $output-dir.add('03-incomplete-page.html').slurp,
+    "Incomplete template is rendered."
 );

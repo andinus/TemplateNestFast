@@ -37,6 +37,72 @@ Note: This module is currently a work in-progress. The goal is to have
   are replaced with empty string. This is for compatibility with
   Template::Nest (Raku).
 
+- ~show-labels~ (default: ~False~): If True, an string is appended to
+  every rendered template which is helpful in identifying which
+  template the output text came from. This is useful in development
+  when you have many templates.
+
+  Example:
+  #+begin_src
+<!-- BEGIN 00-simple-page -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simple Page</title>
+  </head>
+  <body>
+    <p>A fairly simple page to test the performance of Template::Nest.</p>
+    <p>Simple Variable</p>
+    <!-- BEGIN 01-simple-component -->
+<p>Simple Variable in Simple Component</p>
+<!-- END 01-simple-component -->
+  </body>
+</html>
+<!-- END 00-simple-page -->
+  #+end_src
+
+  Here, 'BEGIN' & 'END' blocks have been added because ~show-labels~
+  was set to True.
+
+  If you're not templating HTML and still want labels, you can set
+  ~comment-delims~.
+
+- ~comment-delims~ (default: ~['<!--', '-->']~): Use this in
+  conjunction with ~show-labels~. Expects a 2 element array. Example,
+  for templating JS you could do:
+
+  #+begin_src raku
+my $nest-alt = Template::Nest::Fast.new(
+    :$template-dir, :show-labels, comment-delims => ['/*', '*/']
+);
+  #+end_src
+
+  Example output:
+  #+begin_src
+/* BEGIN js-file */
+...
+/* END js-file */
+  #+end_src
+
+  You can set the second comment token as an empty string if the
+  language you are templating does not use one. Example, for
+  templating Raku you could do:
+
+  #+begin_src raku
+my $nest-alt = Template::Nest::Fast.new(
+    :$template-dir, :show-labels, comment-delims => ['#', '']
+);
+  #+end_src
+
+  Example output:
+  #+begin_src
+# BEGIN raku-file
+...
+# END raku-file */
+  #+end_src
+
 ** Methods
 
 - ~render~: Converts a template structure to output text. See Example

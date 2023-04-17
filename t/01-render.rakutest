@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 3;
+plan 4;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
@@ -75,6 +75,9 @@ is(
     $output-dir.add('01-simple-page.html').slurp,
     "Simple template is rendered."
 );
+
+# check if returned HTML is a string.
+is $nest.render(%simple-page).WHAT, Str, "Rendered HTML is a string.";
 
 # render test with complex template hash.
 is(

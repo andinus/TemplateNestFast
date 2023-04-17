@@ -97,7 +97,7 @@ class Template::Nest::Fast {
     }
 
     method render(%t --> Str) {
-        die "Invalid template, no name-label: {%t}" without %t{$!name-label};
+        die "Invalid template, no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
 
         my Str $rendered;
 

@@ -1,8 +1,9 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 1;
+plan 2;
 
+my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 my $nest = Template::Nest::Fast.new( :$template-dir );
 
@@ -15,19 +16,60 @@ my %simple-page = %(
     )
 );
 
+my %complex-page = %(
+    TEMPLATE => '10-complex-page',
+    title => 'Complex Page',
+    pre_body => %(
+        TEMPLATE => '18-styles',
+    ),
+    navigation => %(
+        TEMPLATE => '11-navigation',
+        banner => %(
+            TEMPLATE => '12-navigation-banner',
+        ),
+        items => [
+                  %( TEMPLATE => '13-navigation-item-00-services' ),
+                  %( TEMPLATE => '13-navigation-item-01-resources' ),
+              ]
+    ),
+    hero_section => %(
+        TEMPLATE => '14-hero-section',
+    ),
+    main_content => [
+                     %( TEMPLATE => '15-isdc-card', ),
+                     %(
+                         TEMPLATE => '16-vb-brand-cards',
+                         cards => [
+                                   %(
+                                       TEMPLATE => '17-vb-brand-card-00',
+                                       parent_classes => 'p-card brand-card col-4',
+                                   ),
+                                   %(
+                                       TEMPLATE => '17-vb-brand-card-01',
+                                       parent_classes => 'p-card brand-card col-4',
+                                   ),
+                                   %(
+                                       TEMPLATE => '17-vb-brand-card-02',
+                                       parent_classes => 'p-card brand-card col-4',
+                                   ),
+                               ]
+                     )
+                 ],
+    post_footer => %(
+        TEMPLATE => '19-scripts'
+    )
+);
+
 # render test with simple string, template substitution.
-is $nest.render(%simple-page), q:to/END/, "Simple template is rendered.";
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Simple Page</title>
-  </head>
-  <body>
-    <p>A fairly simple page to test the performance of Template::Nest.</p>
-    <p>Simple Variable</p>
-    <p>Simple Variable in Simple Component</p>
-  </body>
-</html>
-END
+is(
+    $nest.render(%simple-page),
+    $output-dir.add('01-simple-page.html').slurp,
+    "Simple template is rendered."
+);
+
+# render test with complex template hash.
+is(
+    $nest.render(%complex-page),
+    $output-dir.add('02-complex-page.html').slurp,
+    "Complex template is rendered."
+);

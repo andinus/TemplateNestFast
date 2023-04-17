@@ -77,7 +77,8 @@ class Template::Nest::Fast {
     method !parse($var --> Str) {
         given $var {
             when Str  { return $var.Str }
-            when Hash { return self.render($var) }
+            # trim trailing when substituting a hash.
+            when Hash { return self.render($var).trim-trailing }
             when List { return $var.map({self.render($_)}).join }
         }
     }

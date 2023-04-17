@@ -89,6 +89,8 @@ class Template::Nest::Fast {
     }
 
     method render(%t --> Str) {
+        die "Invalid template, no name-label: %t" without %t{$!name-label};
+
         my Str $rendered;
 
         # After mutating the rendered string the positions of those

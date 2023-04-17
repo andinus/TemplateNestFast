@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 4;
+plan 6;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
@@ -92,4 +92,30 @@ is(
     $nest.render(%incomplete-page),
     $output-dir.add('03-incomplete-page.html').slurp,
     "Incomplete template is rendered."
+);
+
+# should die with invalid template hash (i.e. where there is no name
+# label).
+my %invalid-page = %(
+    # no name-label.
+    variable => 'Simple Variable',
+);
+
+my %invalid-page-more = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        # no name-label.
+        # empty.
+    )
+);
+
+dies-ok(
+    { $nest.render(%invalid-page) },
+    "Dies with invalid template hash (i.e. without name label)."
+);
+
+dies-ok(
+    { $nest.render(%invalid-page) },
+    "Dies with invalid template hash (i.e. without name label) that is nested."
 );

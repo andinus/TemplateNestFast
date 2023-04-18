@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 7;
+plan 8;
 
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 my $nest = Template::Nest::Fast.new( :$template-dir );

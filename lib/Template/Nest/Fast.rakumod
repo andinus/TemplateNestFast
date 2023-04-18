@@ -145,7 +145,7 @@ class Template::Nest::Fast {
                 $delta += - %v<length> + $append.chars;
             }
         } else {
-            die "Unrecognized template: {%t{$!name-label}}.";
+            die "Unrecognized template: {%t{$!name-label}}";
         }
 
         # Add labels to the rendered string if $!show-labels is True.

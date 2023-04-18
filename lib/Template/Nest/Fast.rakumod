@@ -7,6 +7,7 @@ class Template::Nest::Fast {
     # has Str @!token-delims = ['<!--%', '%-->'];
     has Str $.name-label = 'TEMPLATE';
     has IO $.template-dir is required;
+    has Str $.template-extension = '';
 
     # If True, add comment to the rendered output to make it easier to
     # identify which template the output is from.
@@ -27,12 +28,15 @@ class Template::Nest::Fast {
     #| TWEAK reads all the files in template-dir ending with '.html'
     #| extension and indexes them.
     submethod TWEAK() {
-        # Grab all files ending with .html recursively.
+        # Grab all files ending with $!template-extension recursively.
+        # If the extension is set to an empty string, grab all the
+        # files.
         my IO @stack = $!template-dir, ;
         my IO @templates = gather while @stack {
             with @stack.pop {
                 when :d { @stack.append: .dir }
-                .take when .extension.lc eq 'html';
+                when $!template-extension eq '' { .take }
+                when .extension.lc eq $!template-extension { .take }
             }
         }
 
@@ -43,9 +47,11 @@ class Template::Nest::Fast {
     #| index-template reads a template and prepares it for render.
     method !index-template(IO $template) {
         # Get template name relative to $!template-dir and remove
-        # `.html` extension.
-        my Str $t = $template.relative($!template-dir).substr(0, *-5);
-
+        # extension. Remove the extension and the dot. If
+        # $!template-extension is empty then there is no extension
+        # length.
+        my Int $extension-length =  $_ eq '' ?? 0 !! (.chars + 1) with $!template-extension;
+        my Str $t = $template.relative($!template-dir).substr(0, *-$extension-length);
         my Str $f = $template.slurp;
 
         # Store the template path.

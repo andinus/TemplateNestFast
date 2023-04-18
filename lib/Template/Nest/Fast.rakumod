@@ -7,7 +7,7 @@ class Template::Nest::Fast {
     # has Str @!token-delims = ['<!--%', '%-->'];
     has Str $.name-label = 'TEMPLATE';
     has IO $.template-dir is required;
-    has Str $.template-extension = '';
+    has Str $.template-extension = 'html';
 
     # If True, add comment to the rendered output to make it easier to
     # identify which template the output is from.

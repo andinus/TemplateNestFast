@@ -103,6 +103,32 @@ my $nest-alt = Template::Nest::Fast.new(
 # END raku-file */
   #+end_src
 
+- ~template-extension~ (default: ~html~): get/set the template
+  extension. This is so you can save typing your template extension
+  all the time if it's always the same. There is no reason why this
+  templating system could not be used to construct any other type of
+  file (or why you could not use another extension even if you were
+  producing html). Example, to manipulate JavaScript files, this will
+  look for ~30-main.js~ in ~$template-dir~:
+
+  #+begin_src raku
+my $nest-js = Template::Nest::Fast.new: :$template-dir, :template-extension('js');
+my %simple-page-js = %(
+    TEMPLATE => '30-main',
+    var => 'Simple Variable',
+);
+  #+end_src
+
+  Or if you have an empty ~template-extension~, this will look for
+  ~30-main.html~ in ~$template-dir~:
+  #+begin_src raku
+my $nest = Template::Nest::Fast.new: :$template-dir, :template-extension('');
+my %simple-page-js = %(
+    TEMPLATE => '30-main.html',
+    var => 'Simple Variable',
+);
+  #+end_src
+
 ** Methods
 
 - ~render~: Converts a template structure to output text. See Example

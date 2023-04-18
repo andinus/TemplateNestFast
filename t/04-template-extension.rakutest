@@ -26,12 +26,12 @@ is(
 );
 
 my %simple-page-js = %(
-    TEMPLATE => '30-main.js',
+    TEMPLATE => '30-main',
     var => 'Simple Variable',
 );
 # render test with template-extension as js.
 is(
-    $nest.render(%simple-page-js),
-    $output-dir.add('04-main-template-extension.js').slurp,
+    $nest-js.render(%simple-page-js),
+    $output-dir.add('06-main-template-extension.js').slurp,
     "Simple template is rendered with template-extension as 'js'."
 );

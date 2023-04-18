@@ -10,7 +10,7 @@ use-ok 'Template::Nest::Fast';
 
 for qw[
     new template-dir show-labels comment-delims die-on-bad-params
-    name-label
+    name-label template-extension
 ] -> $method {
     can-ok $nest, $method, "Can $method";
 }

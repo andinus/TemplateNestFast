@@ -22,6 +22,20 @@ Note: This module is currently a work in-progress. The goal is to have
 
 ** Options
 
+Compatibility Progress:
+#+begin_src
+[X] comment_delims
+[ ] defaults_namespace_char
+[X] die_on_bad_params
+[ ] escape_char
+[ ] fixed_indent
+[X] name_label
+[X] show_labels
+[X] template_dir
+[X] template_ext
+[ ] token_delims
+#+end_src
+
 - ~name-label~ (default ~TEMPLATE~): Represents the label used for
   identifying the template name in the hash of template variables.
 

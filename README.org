@@ -204,3 +204,10 @@ Output:
 ** v0.1.0 - 2023-03-28
 
 + Initial Release.
+
+* See Also
+
+- Template::Nest [Perl5] https://metacpan.org/pod/Template::Nest
+- template-nest [Python] https://pypi.org/project/template-nest/
+- Template::Nest [Raku] https://raku.land/cpan:TOMGRACEY/Template::Nest
+- Template::Nest::XS [Raku] https://raku.land/zef:jaffa4/Template::Nest::XS

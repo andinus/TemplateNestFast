@@ -33,7 +33,7 @@ Compatibility Progress:
 [X] show_labels
 [X] template_dir
 [X] template_ext
-[ ] token_delims
+[X] token_delims
 #+end_src
 
 - ~name-label~ (default ~TEMPLATE~): Represents the label used for
@@ -176,6 +176,15 @@ my %simple-page-js = %(
         <img src='/some-image.jpg'>
     </div>
 </div>
+  #+end_src
+
+- ~token-delims~ (default: ~['<!--%', '%-->']~): Set the delimiters
+  that define a token (to be replaced). For example, setting
+  ~token-delims~ to ~['<%', '%>']~ would mean that ~render~ will now
+  recognize and interpolate tokens in the format:
+
+  #+begin_src
+<% variable %>
   #+end_src
 
 ** Methods

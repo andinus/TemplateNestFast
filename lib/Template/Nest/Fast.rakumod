@@ -30,6 +30,7 @@ class Template::Nest::Fast {
     has Str $.token-escape-char = '\\';
 
     has %.defaults;
+    has $.default-namespace-char = '.';
 
     # Template objects after compilation.
     has %!templates;
@@ -71,7 +72,7 @@ class Template::Nest::Fast {
 
         # Capture the start, end delim and the variable inside it. DO NOT
         # backtrack.
-        with $f ~~ m:g/($start-delim): \s*: (<[a..zA..Z0..9_-]>+): \s*: ($end-delim):/ -> @m {
+        with $f ~~ m:g/($start-delim): \s*: (<graph>+): \s*: ($end-delim):/ -> @m {
             # Initialize with an empty list.
             %!templates{$t}<vars> = [];
 

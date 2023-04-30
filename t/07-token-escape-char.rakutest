@@ -1,0 +1,36 @@
+use Test;
+use Template::Nest::Fast;
+
+plan 2;
+
+my IO $output-dir = $*PROGRAM.IO.parent.add('output');
+my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
+
+my $nest = Template::Nest::Fast.new( :$template-dir );
+
+my %simple-page = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        TEMPLATE => '01-simple-component-token-escape',
+    )
+);
+
+is(
+    $nest.render(%simple-page),
+    $output-dir.add('09-simple-page-token-escape.html').slurp,
+    "Simple template is rendered with token escaping."
+);
+
+# This template file is included to test if Template::Nest::Fast can
+# handle files where token is at the beginning of file.
+my %var-at-begin = %(
+    TEMPLATE => '03-var-at-begin',
+    variable => 'Simple Variable'
+);
+
+is(
+    $nest.render(%var-at-begin),
+    $output-dir.add('10-var-at-begin.html').slurp,
+    "Template is rendered with token escaping and variable at file begin."
+);

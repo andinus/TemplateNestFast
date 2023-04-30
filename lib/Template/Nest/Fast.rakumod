@@ -26,6 +26,9 @@ class Template::Nest::Fast {
     # templates.
     has Bool $.fixed-indent = False;
 
+    # To escape token delimiters.
+    has Str $.token-escape-char = '\\';
+
     # Template objects after compilation.
     has %!templates;
 
@@ -74,24 +77,50 @@ class Template::Nest::Fast {
             # delim and the variable.
             #
             # We sort @m by the start delim's position. (Does some
-            # magic, I have to comment it)
-            for @m.sort(*[0].from) -> $m {
+            # magic, I have to comment it). It's important to mutate
+            # the template file forwards only. Otherwise all the
+            # calculations break.
+            DELIM: for @m.sort(*[0].from) -> $m {
+                my Int $start-pos = $m[0].from;
+
+                # If token-escape-char is set then we look behind for
+                # it, if it is present then this token is skipped.
+                with $!token-escape-char {
+                    my Int $escape-char-start-pos = $start-pos - .chars;
+
+                    # token can be at the beginning of file and that
+                    # might cause substr() to fail so we first check
+                    # for range.
+                    if (.chars > 0 && $escape-char-start-pos > 0
+                        && $f.substr($escape-char-start-pos, .chars) eq $_) {
+                        # vars that have token-escape-char set as True are
+                        # simply removed before render.
+                        push %!templates{$t}<vars>, %(
+                            token-escape-char => True,
+                            start-pos => $escape-char-start-pos,
+                            length => .chars
+                        );
+                        next DELIM;
+                    }
+                }
+
                 # We need to extract the indent level of this
                 # variable. If fixed-indent is True then this info is
                 # used.
                 my Int $indent-space;
-                with $f.rindex("\n", $m[0].from) -> $newline-pos {
-                    $indent-space = $m[0].from - $newline-pos - 1;
+                with $f.rindex("\n", $start-pos) -> $newline-pos {
+                    $indent-space = $start-pos - $newline-pos - 1;
                 } else {
-                    $indent-space = $m[0].from - 1;
+                    $indent-space = $start-pos - 1;
                 }
+
                 # Store each variable alongside it's template file in
                 # %!templates.
                 push %!templates{$t}<vars>, %(
                     name      => $m[1].Str,
-                    start-pos => $m[0].from, # replace from.
-                    length    => ($m[2].to - $m[0].from), # length to replace.
-                    :$indent-space
+                    length    => ($m[2].to - $start-pos), # length to replace.
+                    :$indent-space,
+                    :$start-pos
                 );
             }
 
@@ -150,7 +179,15 @@ class Template::Nest::Fast {
 
             # Loop over indexed variables, if a variable is not
             # defined in the template hash then we don't proceed.
-            for @(%t-indexed<vars>) -> %v {
+            VAR: for @(%t-indexed<vars>) -> %v {
+                # If the variable is a token-escape-char then simply
+                # remove it.
+                if %v<token-escape-char> {
+                    $rendered.substr-rw(%v<start-pos> + $delta, %v<length>) = '';
+                    $delta -= %v<length>;
+                    next VAR;
+                }
+
                 # For variables that are not defined in template hash,
                 # replace them with empty string.
                 my Str $append = (%t{%v<name>}:exists)

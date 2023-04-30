@@ -27,7 +27,7 @@ Compatibility Progress:
 [X] comment_delims
 [ ] defaults_namespace_char
 [X] die_on_bad_params
-[ ] escape_char
+[ ] escape_char             - Won't be implemented
 [X] fixed_indent
 [X] name_label
 [X] show_labels
@@ -35,6 +35,8 @@ Compatibility Progress:
 [X] template_ext
 [X] token_delims
 #+end_src
+
+Note: ~escape_char~ has been replaced with ~token-escape-char~.
 
 - ~name-label~ (default ~TEMPLATE~): Represents the label used for
   identifying the template name in the hash of template variables.
@@ -186,6 +188,22 @@ my %simple-page-js = %(
   #+begin_src
 <% variable %>
   #+end_src
+
+- ~token-escape-char~ (default: ~\~): On rare occasions you may
+  actually want to use the exact character string you are using for
+  your token delimiters in one of your templates. For example, here
+  ~render~ is going to consider this as a token and remove it:
+
+  #+begin_src
+did you know we are using token delimiters <!--% and %--> in our templates?
+  #+end_src
+
+  To include the token, escape it with ~token-escape-char~:
+  #+begin_src
+did you know we are using token delimiters \<!--% and %--> in our templates?
+  #+end_src
+
+  Set it to an empty string to disable this behaviour.
 
 ** Methods
 

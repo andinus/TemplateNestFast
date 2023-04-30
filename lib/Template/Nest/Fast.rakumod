@@ -22,6 +22,10 @@ class Template::Nest::Fast {
     # an error.
     has Bool $.die-on-bad-params = True;
 
+    # Intended to improve readability when inspecting nested
+    # templates.
+    has Bool $.fixed-indent = False;
+
     # Template objects after compilation.
     has %!templates;
 
@@ -69,12 +73,22 @@ class Template::Nest::Fast {
             # We sort @m by the start delim's position. (Does some
             # magic, I have to comment it)
             for @m.sort(*[0].from) -> $m {
+                # We need to extract the indent level of this
+                # variable. If fixed-indent is True then this info is
+                # used.
+                my Int $indent-space;
+                with $f.rindex("\n", $m[0].from) -> $newline-pos {
+                    $indent-space = $m[0].from - $newline-pos - 1;
+                } else {
+                    $indent-space = $m[0].from - 1;
+                }
                 # Store each variable alongside it's template file in
                 # %!templates.
                 push %!templates{$t}<vars>, %(
                     name      => $m[1].Str,
                     start-pos => $m[0].from, # replace from.
                     length    => ($m[2].to - $m[0].from), # length to replace.
+                    :$indent-space
                 );
             }
 
@@ -93,16 +107,18 @@ class Template::Nest::Fast {
     #|
     #| parse here consumes 'xyz' and returns 'hi', it can also handle
     #| keys where the value is another Hash or a List.
-    method !parse($var --> Str) {
+    method !parse($var, Int $level! --> Str) {
         given $var {
             when Str  { return $var.Str }
             # trim-trailing to account for files ending on new line.
-            when Hash { return self.render($var).trim-trailing }
-            when List { return $var.map({self.render($_).trim-trailing}).join }
+            when Hash { return self.render($var, $level + 1).trim-trailing }
+            when List { return $var.map({self.render($_, $level + 1).trim-trailing}).join }
         }
     }
 
-    method render(%t --> Str) {
+    #| render method renders the template, given a template hash.
+    #| $level sets the indent level.
+    method render(%t, Int $level = 0 --> Str) {
         die "Invalid template, no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
 
         my Str $rendered;
@@ -135,8 +151,12 @@ class Template::Nest::Fast {
                 # For variables that are not defined in template hash,
                 # replace them with empty string.
                 my Str $append = (%t{%v<name>}:exists)
-                                     ?? self!parse(%t{%v<name>})
+                                     ?? self!parse(%t{%v<name>}, $level)
                                      !! '';
+                if $!fixed-indent {
+                    $append .= subst("\n", "\n%s".sprintf(' ' x %v<indent-space>), :g);
+                }
+
                 # Replace the template variable.
                 $rendered.substr-rw(%v<start-pos> + $delta, %v<length>) = $append;
 

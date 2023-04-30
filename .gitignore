@@ -1,2 +1,4 @@
-lib/.precomp
 .precomp/
+lib/.precomp
+
+.dir-locals.el

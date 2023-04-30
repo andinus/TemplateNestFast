@@ -137,20 +137,27 @@ class Template::Nest::Fast {
     #| get-default-value takes a key and returns the default value for
     #| it. It looks up the %defaults hash, if none is found then it
     #| returns an empty string.
-    method !get-default-value($n) {
-        my $value = %!defaults{$n};
+    method !get-default-value($n --> Str) {
+        my $value;
 
-        # if value not found in defaults hash then namespace and look
-        # for value.
-        without $value {
-            my @k = $n.split($!default-namespace-char).reverse;
+        with %!defaults {
+            $value = %!defaults{$n};
 
-            $value = %!defaults{@k.pop};
-            while @k {
-                $value = $value{@k.pop};
-                last without $value;
+            # if value not found in defaults hash then namespace and look
+            # for value.
+            if $!default-namespace-char.chars > 0 {
+                without $value {
+                    my @k = $n.split($!default-namespace-char).reverse;
+
+                    $value = %!defaults{@k.pop};
+                    while @k {
+                        $value = $value{@k.pop};
+                        last without $value;
+                    }
+                }
             }
         }
+
         return $value // '';
     }
 

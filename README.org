@@ -28,7 +28,7 @@ Compatibility Progress:
 [ ] defaults_namespace_char
 [X] die_on_bad_params
 [ ] escape_char
-[ ] fixed_indent
+[X] fixed_indent
 [X] name_label
 [X] show_labels
 [X] template_dir
@@ -141,6 +141,41 @@ my %simple-page-js = %(
     TEMPLATE => '30-main.html',
     var => 'Simple Variable',
 );
+  #+end_src
+
+- ~fixed-indent~ (default: ~False~): Intended to improve readability
+  when inspecting nested templates. For example, consider these templates:
+
+  wrapper.html:
+  #+begin_src html
+<div>
+    <!--% contents %-->
+</div>
+  #+end_src
+
+  photo.html:
+  #+begin_src html
+<div>
+    <img src='/some-image.jpg'>
+</div>
+  #+end_src
+
+  Output without ~fixed-indent~:
+  #+begin_src html
+<div>
+    <div>
+    <img src='/some-image.jpg'>
+</div>
+</div>
+  #+end_src
+
+  Output with ~fixed-indent~:
+  #+begin_src html
+<div>
+    <div>
+        <img src='/some-image.jpg'>
+    </div>
+</div>
   #+end_src
 
 ** Methods

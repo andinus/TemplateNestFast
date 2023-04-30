@@ -1,0 +1,73 @@
+use Test;
+use Template::Nest::Fast;
+
+plan 2;
+
+my IO $output-dir = $*PROGRAM.IO.parent.add('output');
+my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
+
+my $nest = Template::Nest::Fast.new( :$template-dir, :fixed-indent );
+
+my %simple-page = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        TEMPLATE => '02-simple-component-multi-line',
+    )
+);
+
+is(
+    $nest.render(%simple-page),
+    $output-dir.add('07-simple-page-fixed-indent.html').slurp,
+    "Simple template is rendered with fixed-indent = True."
+);
+
+my %complex-page = %(
+    TEMPLATE => '10-complex-page',
+    title => 'Complex Page',
+    pre_body => %(
+        TEMPLATE => '18-styles',
+    ),
+    navigation => %(
+        TEMPLATE => '11-navigation',
+        banner => %(
+            TEMPLATE => '12-navigation-banner',
+        ),
+        items => [
+                  %( TEMPLATE => '13-navigation-item-00-services' ),
+                  %( TEMPLATE => '13-navigation-item-01-resources' ),
+              ]
+    ),
+    hero_section => %(
+        TEMPLATE => '14-hero-section',
+    ),
+    main_content => [
+                     %( TEMPLATE => '15-isdc-card', ),
+                     %(
+                         TEMPLATE => '16-vb-brand-cards',
+                         cards => [
+                                   %(
+                                       TEMPLATE => '17-vb-brand-card-00',
+                                       parent_classes => 'p-card brand-card col-4',
+                                   ),
+                                   %(
+                                       TEMPLATE => '17-vb-brand-card-01',
+                                       parent_classes => 'p-card brand-card col-4',
+                                   ),
+                                   %(
+                                       TEMPLATE => '17-vb-brand-card-02',
+                                       parent_classes => 'p-card brand-card col-4',
+                                   ),
+                               ]
+                     )
+                 ],
+    post_footer => %(
+        TEMPLATE => '19-scripts'
+    )
+);
+
+is(
+    $nest.render(%complex-page),
+    $output-dir.add('08-complex-page-fixed-indent.html').slurp,
+    "Complex template is rendered with fixed-indent = True."
+);

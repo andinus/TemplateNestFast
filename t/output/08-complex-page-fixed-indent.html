@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Complex Page</title>
+        <link rel="stylesheet" href="/03-resources/style.css" />
+        <style>
+         .nav-vb-logo {
+             max-width: 200px;
+         }
+         .hero-section {
+             background-image: url('/03-resources/bg-header.jpg');
+             background-size: cover;
+         }
+         main {
+             margin-top: 1em;
+         }
+         main .brand-card img {
+             max-width: 50%;
+             margin: auto;
+         }
+         footer {
+             text-align: center;
+             padding: 4em;
+         }
+        </style>
+    </head>
+    <body>
+        <header id="navigation" class="p-navigation is-dark">
+            <div class="p-navigation__row">
+                <div class="p-navigation__banner">
+                    <div class="p-navigation__tagged-logo">
+                        <a class="p-navigation__link" href="#">
+                            <span class="p-navigation__logo-title">
+                                <img class="nav-vb-logo" src="https://virtual.blue/resources/img/vb-small-dark-bg.png" alt="virtual.blue logo">
+                            </span>
+                        </a>
+                    </div>
+                    <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+                    <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+                </div>
+                <nav class="p-navigation__nav" aria-label="Example sub navigation">
+                    <ul class="p-navigation__items">
+                        <li class="p-navigation__item--dropdown-toggle" id="link-2">
+                            <a href="#link-2-menu" aria-controls="link-2-menu" class="p-navigation__link">Services</a>
+                            <ul class="p-navigation__dropdown" id="link-2-menu" aria-hidden="true">
+                                <li>
+                                    <a href="#" class="p-navigation__dropdown-item">Web & Mobile Apps</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="p-navigation__dropdown-item">Legacy Code</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="p-navigation__dropdown-item">Migrations</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="p-navigation__dropdown-item">Replacement Systems</a>
+                                </li>
+                            </ul>
+                        </li><li class="p-navigation__item--dropdown-toggle" id="link-3">
+                            <a href="#link-3-menu" aria-controls="link-3-menu" class="p-navigation__link">Resources</a>
+                            <ul class="p-navigation__dropdown" id="link-3-menu" aria-hidden="true">
+                                <li>
+                                    <a href="#" class="p-navigation__dropdown-item">Point Drag Controls</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="p-navigation__dropdown-item">Delay Proxy</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="p-navigation__dropdown-item">TaskPipe</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="p-navigation__items">
+                        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+                            <a class="p-navigation__link" aria-controls="account-menu">
+                                My account
+                            </a>
+                            <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+                                <li>
+                                    <a href="#" class="p-navigation__dropdown-item">Sign out</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <section class="p-strip--light is-bordered hero-section">
+            <div class="row">
+                <h1>Software Systems</h1>
+                <p>Quality web and app specialists at low cost. New app development. Web-scrapers and crawlers. Full systems. Legacy repairs.</p>
+            </div>
+        </section>
+
+        <main class="row">
+            <div class="p-card">
+                <div class="row">
+                    <div class="col-4">
+                        <img src="https://virtual.blue/resources/img/isdc-zoom.png">
+                    </div>
+                    <div class="col-8">
+                        <h3>Raku Prodigy ISDC</h3>
+                        <p class="p-card__content">
+                            Are you a rising coding talent with a flair for innovative system development?
+                            Make a name for yourself by winning our <a href="https://virtual.blue/isdc">web development competition</a>.
+                        </p>
+                    </div>
+                </div>
+            </div><div class="row brand-cards-wrapper">
+                <div class="p-card brand-card col-4">
+                    <div class="p-card__content">
+                        <img class="p-card__image" alt="" src="https://virtual.blue/resources/img/home/Cost%20Minimising.svg">
+                        <h4>
+                            Cost Minimising
+                        </h4>
+                        <p class="u-no-padding--bottom">Through our efficient approach to project management we are able to offer some of the lowest service rates in the industry - without compromising on quality.</p>
+                    </div>
+                </div><div class="p-card brand-card col-4">
+                    <div class="p-card__content">
+                        <img class="p-card__image" alt="" src="https://virtual.blue/resources/img/home/Code%20Warranty.svg">
+                        <h4>
+                            Code Warranty
+                        </h4>
+                        <p class="u-no-padding--bottom">As standard we continue to provide support for 6 months after you have accepted the code. This includes explaining usage, performing minor adjustments and ironing out any bugs. Subject to contract terms.</p>
+                    </div>
+                </div><div class="p-card brand-card col-4">
+                    <div class="p-card__content">
+                        <img class="p-card__image" alt="" src="https://virtual.blue/resources/img/home/Tailor%20Made%20Solutions.svg">
+                        <h4>
+                            Tailor Made Solutions
+                        </h4>
+                        <p class="u-no-padding--bottom">When evaluating your case we'll consider your individual requirements, your specific business needs and the particular problem you are facing - so we'll always propose solutions which are uniquely tailored to your situation.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <h2>virtual.blue</h2>
+        </footer>
+
+        <script>
+         function toggleDropdown(toggle, open) {
+             let parentElement = toggle.parentNode;
+             let dropdown = document.getElementById(toggle.getAttribute('aria-controls'));
+             dropdown.setAttribute('aria-hidden', !open);
+        
+             if (open) {
+                 parentElement.classList.add('is-active');
+             } else {
+                 parentElement.classList.remove('is-active');
+             }
+         }
+        
+         function closeAllDropdowns(toggles) {
+             toggles.forEach(function (toggle) {
+                 toggleDropdown(toggle, false);
+             });
+         }
+        
+         function handleClickOutside(toggles, containerClass) {
+             document.addEventListener('click', function (event) {
+                 let target = event.target;
+        
+                 if (target.closest) {
+                     if (!target.closest(containerClass)) {
+                         closeAllDropdowns(toggles);
+                     }
+                 }
+             });
+         }
+        
+         function initNavDropdowns(containerClass) {
+             let toggles = [].slice.call(document.querySelectorAll(containerClass + ' [aria-controls]'));
+        
+             handleClickOutside(toggles, containerClass);
+        
+             toggles.forEach(function (toggle) {
+                 toggle.addEventListener('click', function (e) {
+                     e.preventDefault();
+        
+                     const shouldOpen = !toggle.parentNode.classList.contains('is-active');
+                     closeAllDropdowns(toggles);
+                     toggleDropdown(toggle, shouldOpen);
+                 });
+             });
+         }
+        
+         initNavDropdowns('.p-navigation__item--dropdown-toggle');
+        </script>
+    </body>
+</html>

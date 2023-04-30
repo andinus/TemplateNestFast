@@ -25,6 +25,7 @@ Note: This module is currently a work in-progress. The goal is to have
 Compatibility Progress:
 #+begin_src
 [X] comment_delims
+[ ] defaults
 [ ] defaults_namespace_char
 [X] die_on_bad_params
 [ ] escape_char             - Won't be implemented

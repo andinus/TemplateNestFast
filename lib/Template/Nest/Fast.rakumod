@@ -134,6 +134,26 @@ class Template::Nest::Fast {
         }
     }
 
+    #| get-default-value takes a key and returns the default value for
+    #| it. It looks up the %defaults hash, if none is found then it
+    #| returns an empty string.
+    method !get-default-value($n) {
+        my $value = %!defaults{$n};
+
+        # if value not found in defaults hash then namespace and look
+        # for value.
+        without $value {
+            my @k = $n.split($!default-namespace-char).reverse;
+
+            $value = %!defaults{@k.pop};
+            while @k {
+                $value = $value{@k.pop};
+                last without $value;
+            }
+        }
+        return $value // '';
+    }
+
     #| parse consumes values of keys of the template object and
     #| returns the final string that needs to be replaced with that
     #| key.
@@ -196,7 +216,7 @@ class Template::Nest::Fast {
                 # %!defaults then use those instead.
                 my Str $append = (%t{%v<name>}:exists)
                                      ?? self!parse(%t{%v<name>}, $level)
-                                     !! ((%!defaults{%v<name>}:exists) ?? %!defaults{%v<name>} !! '');
+                                     !! self!get-default-value(%v<name>);
                 if $!fixed-indent {
                     $append .= subst("\n", "\n%s".sprintf(' ' x %v<indent-space>), :g);
                 }

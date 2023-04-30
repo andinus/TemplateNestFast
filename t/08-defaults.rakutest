@@ -1,15 +1,18 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 1;
+plan 2;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 my $nest = Template::Nest::Fast.new(
     :$template-dir,
     defaults => %(
-        variable => 'Simple Variable'
-    )
+        variable => 'Simple Variable',
+        space => %(
+            inside => 'A variable inside a space.'
+        )
+    ),
 );
 
 my %simple-page = %(
@@ -19,9 +22,15 @@ my %simple-page = %(
         variable => 'Simple Variable in Simple Component'
     )
 );
-
 is(
     $nest.render(%simple-page),
     $output-dir.add('01-simple-page.html').slurp,
     "Simple template is rendered with defaults."
+);
+
+my %space-page = %( TEMPLATE => '03-namespace-page' );
+is(
+    $nest.render(%space-page),
+    $output-dir.add('11-namespace-page.html').slurp,
+    "Simple template is rendered with default namespaced char."
 );

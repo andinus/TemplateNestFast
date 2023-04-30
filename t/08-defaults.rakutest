@@ -1,0 +1,27 @@
+use Test;
+use Template::Nest::Fast;
+
+plan 1;
+
+my IO $output-dir = $*PROGRAM.IO.parent.add('output');
+my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
+my $nest = Template::Nest::Fast.new(
+    :$template-dir,
+    defaults => %(
+        variable => 'Simple Variable'
+    )
+);
+
+my %simple-page = %(
+    TEMPLATE => '00-simple-page',
+    simple_component => %(
+        TEMPLATE => '01-simple-component',
+        variable => 'Simple Variable in Simple Component'
+    )
+);
+
+is(
+    $nest.render(%simple-page),
+    $output-dir.add('01-simple-page.html').slurp,
+    "Simple template is rendered with defaults."
+);

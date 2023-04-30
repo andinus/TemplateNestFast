@@ -29,6 +29,8 @@ class Template::Nest::Fast {
     # To escape token delimiters.
     has Str $.token-escape-char = '\\';
 
+    has %.defaults;
+
     # Template objects after compilation.
     has %!templates;
 
@@ -189,10 +191,11 @@ class Template::Nest::Fast {
                 }
 
                 # For variables that are not defined in template hash,
-                # replace them with empty string.
+                # replace them with empty string. If they exist in
+                # %!defaults then use those instead.
                 my Str $append = (%t{%v<name>}:exists)
                                      ?? self!parse(%t{%v<name>}, $level)
-                                     !! '';
+                                     !! ((%!defaults{%v<name>}:exists) ?? %!defaults{%v<name>} !! '');
                 if $!fixed-indent {
                     $append .= subst("\n", "\n%s".sprintf(' ' x %v<indent-space>), :g);
                 }

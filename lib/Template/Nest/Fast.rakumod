@@ -4,7 +4,7 @@
 #| module by caching the index of positions of variables, resulting in
 #| significantly faster processing times.
 class Template::Nest::Fast {
-    # has Str @!token-delims = ['<!--%', '%-->'];
+    has Str @.token-delims = ['<!--%', '%-->'];
     has Str $.name-label = 'TEMPLATE';
     has IO $.template-dir is required;
     has Str $.template-extension = 'html';
@@ -61,9 +61,12 @@ class Template::Nest::Fast {
         # Store the template path.
         %!templates{$t}<path> = $template;
 
+        my Str $start-delim = @!token-delims[0];
+        my Str $end-delim = @!token-delims[1];
+
         # Capture the start, end delim and the variable inside it. DO NOT
         # backtrack.
-        with $f ~~ m:g/('<!--%'): \s*: (<[a..zA..Z0..9_-]>+): \s*: ('%-->'):/ -> @m {
+        with $f ~~ m:g/($start-delim): \s*: (<[a..zA..Z0..9_-]>+): \s*: ($end-delim):/ -> @m {
             # Initialize with an empty list.
             %!templates{$t}<vars> = [];
 

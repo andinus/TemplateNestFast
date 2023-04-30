@@ -17,16 +17,13 @@ against ~Template::Nest::XS~. Tom Gracey (virtual.blue) is currently
 sponsoring for the development of this module. He authored
 ~Template::Nest~ originally in Perl 5.
 
-Note: This module is currently a work in-progress. The goal is to have
-100% compatibility with ~Template::Nest~ (Raku).
-
 ** Options
 
 Compatibility Progress:
 #+begin_src
 [X] comment_delims
-[ ] defaults
-[ ] defaults_namespace_char
+[X] defaults
+[X] defaults_namespace_char
 [X] die_on_bad_params
 [ ] escape_char             - Won't be implemented
 [X] fixed_indent
@@ -205,6 +202,56 @@ did you know we are using token delimiters \<!--% and %--> in our templates?
   #+end_src
 
   Set it to an empty string to disable this behaviour.
+
+- ~defaults~: Provide a hash of default values that are substituted if
+  template hash does not provide a value. For example, passing this
+  defaults hash:
+
+  #+begin_src raku
+my $nest = Template::Nest::Fast.new(
+    :$template-dir,
+    defaults => %(
+        variable => 'Simple Variable',
+        space => %(
+            inside => 'A variable inside a space.'
+        )
+    ),
+);
+  #+end_src
+
+  This ~$nest~ will first look for variable in template hash, then in
+  ~%defaults~ hash. If no value is found then namespaced defaults are
+  considered (look ~default-namespace-char~).
+
+- ~default-namespace-char~ (default: ~.~): Say you want to namespace
+  values in ~%defaults~ hash to differentiate parameters coming from
+  template hash and chose to prefix those variables like so:
+
+  #+begin_src html
+<!--% config.title %--> - <!--% config.description %-->
+  #+end_src
+
+  You can pass a defaults like:
+  #+begin_src raku
+%(
+    "config.title" => "Title",
+    "config.description" => "Description"
+)
+  #+end_src
+
+  However, writing ~config.~ repeatedly is a bit effortful, so you can
+  do the following:
+  #+begin_src raku
+%(
+    config => %(
+        "title" => "Title",
+        "description" => "Description"
+    )
+)
+  #+end_src
+
+  Note: To disable this behaviour set ~default-namespace-char~ to an
+  empty string.
 
 ** Methods
 

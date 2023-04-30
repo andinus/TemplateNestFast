@@ -30,7 +30,7 @@ class Template::Nest::Fast {
     has Str $.token-escape-char = '\\';
 
     has %.defaults;
-    has $.default-namespace-char = '.';
+    has $.defaults-namespace-char = '.';
 
     # Template objects after compilation.
     has %!templates;
@@ -145,9 +145,9 @@ class Template::Nest::Fast {
 
             # if value not found in defaults hash then namespace and look
             # for value.
-            if $!default-namespace-char.chars > 0 {
+            if $!defaults-namespace-char.chars > 0 {
                 without $value {
-                    my @k = $n.split($!default-namespace-char).reverse;
+                    my @k = $n.split($!defaults-namespace-char).reverse;
 
                     $value = %!defaults{@k.pop};
                     while @k {

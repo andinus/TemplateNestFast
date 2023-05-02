@@ -332,6 +332,23 @@ Output:
 
 * News
 
+** v0.2.0 - 2023-05-02
+
++ Achieved options compatibility with Template::Nest (Raku).
++ Added several options:
+  - ~cache-template~
+  - ~die-on-bad-params~
+  - ~show-labels~
+  - ~comment-delims~
+  - ~template-extension~
+  - ~fixed-indent~
+  - ~token-delims~
+  - ~token-escape-char~
+  - ~defaults~
+  - ~defaults-namespace-char~
+
++ Note: It's not backwards compatible with Template::Nest (Raku).
+
 ** v0.1.0 - 2023-03-28
 
 + Initial Release.

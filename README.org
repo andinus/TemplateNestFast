@@ -42,7 +42,7 @@ Note: ~escape_char~ has been replaced with ~token-escape-char~.
 - ~template-dir~: IO object representing the directory where the
   templates are located.
 
-- ~die-on-bad-params~ (default: ~True~): If True, then an attempt to
+- ~die-on-bad-params~ (default: ~False~): If True, then an attempt to
   populate a template with a variable that doesn't exist (i.e. name
   not found in template file) results in an error.
 

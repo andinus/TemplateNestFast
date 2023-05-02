@@ -4,7 +4,7 @@ use Template::Nest::Fast;
 plan 4;
 
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
-my $nest = Template::Nest::Fast.new( :$template-dir );
+my $nest = Template::Nest::Fast.new( :$template-dir, :die-on-bad-params );
 my $nest-bad = Template::Nest::Fast.new( :$template-dir, die-on-bad-params => False );
 
 my %simple-page = %(

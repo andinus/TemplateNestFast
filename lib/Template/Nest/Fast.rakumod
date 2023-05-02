@@ -20,7 +20,7 @@ class Template::Nest::Fast {
     # If True, then an attempt to populate a template with a variable
     # that doesn't exist (i.e. name not found in template) results in
     # an error.
-    has Bool $.die-on-bad-params = True;
+    has Bool $.die-on-bad-params = False;
 
     # Intended to improve readability when inspecting nested
     # templates.

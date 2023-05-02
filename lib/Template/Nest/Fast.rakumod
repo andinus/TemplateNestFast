@@ -120,6 +120,7 @@ class Template::Nest::Fast {
                 # Store each variable alongside it's template file in
                 # %!templates.
                 push %!templates{$t}<vars>, %(
+                    token-escape-char => False, # this is not an escape char
                     name      => $m[1].Str,
                     length    => ($m[2].to - $start-pos), # length to replace.
                     :$indent-space,
@@ -182,64 +183,57 @@ class Template::Nest::Fast {
     #| $level sets the indent level.
     method render(%t, Int $level = 0 --> Str) {
         die "Invalid template, no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
-
-        my Str $rendered;
+        die "Unrecognized template: {%t{$!name-label}}" without %!templates{%t{$!name-label}};
 
         # Get the indexed version of the template in %t-indexed.
-        with (%!templates{%t{$!name-label}}) -> %t-indexed {
-            # Read the file.
-            $rendered = %t-indexed<path>.slurp;
+        my %t-indexed := %!templates{%t{$!name-label}};
 
-            # Check for bad-params if $!die-on-bad-params is set to
-            # true. We check if the keys in template hash are all
-            # present in template file except for the $!name-label.
-            if $!die-on-bad-params && (%t.keys (-) %t-indexed<keys>) !(==) $!name-label {
-                die qq:to/END/;
+        # Check for bad-params if $!die-on-bad-params is set to
+        # true. We check if the keys in template hash are all
+        # present in template file except for the $!name-label.
+        if $!die-on-bad-params == True && (%t.keys (-) %t-indexed<keys>) !(==) $!name-label {
+            die "
                 Variables in template hash: {%t.keys.grep(* ne $!name-label).sort.gist}
                 Variables in template file: {%t-indexed<keys>.sort.gist}
                 die-on-bad-params value: {$!die-on-bad-params}
-                All variables in template hash must be valid if die-on-bad-params is True.
-                END
-            }
+                All variables in template hash must be valid if die-on-bad-params is True.";
+        } else {
+            my Str $rendered = %t-indexed<path>.slurp;
 
             # Loop over indexed variables, if a variable is not
             # defined in the template hash then we don't proceed.
-            VAR: for @(%t-indexed<vars>) -> %v {
-                # If the variable is a token-escape-char then simply
-                # remove it.
-                if $!token-escape-char.chars > 0 && %v<token-escape-char> {
+            for @(%t-indexed<vars>) -> %v {
+                # Remove escape characters from template file.
+                if ($!token-escape-char.chars > 0 && %v<token-escape-char> == True) {
                     $rendered.substr-rw(%v<start-pos>, %v<length>) = '';
-                    next VAR;
-                }
+                } else {
+                    # For variables that are not defined in template hash,
+                    # replace them with empty string. If they exist in
+                    # %!defaults then use those instead.
+                    my Str $append = (%t{%v<name>}:exists)
+                                         ?? self!parse(%t{%v<name>}, $level)
+                                         !! self!get-default-value(%v<name>);
 
-                # For variables that are not defined in template hash,
-                # replace them with empty string. If they exist in
-                # %!defaults then use those instead.
-                my Str $append = (%t{%v<name>}:exists)
-                                     ?? self!parse(%t{%v<name>}, $level)
-                                     !! self!get-default-value(%v<name>);
-                if $!fixed-indent {
-                    $append .= subst("\n", "\n%s".sprintf(' ' x %v<indent-space>), :g);
-                }
+                    if $!fixed-indent == True {
+                        $append .= subst("\n", "\n%s".sprintf(' ' x %v<indent-space>), :g);
+                    }
 
-                # Replace the template variable.
-                $rendered.substr-rw(%v<start-pos>, %v<length>) = $append;
+                    # Replace the template variable.
+                    $rendered.substr-rw(%v<start-pos>, %v<length>) = $append;
+                }
             }
-        } else {
-            die "Unrecognized template: {%t{$!name-label}}";
+
+            # Add labels to the rendered string if $!show-labels is True.
+            if $!show-labels == True {
+                $rendered.substr-rw(0, 0) = "%s BEGIN %s %s\n".sprintf(
+                    @!comment-delims[0], %t{$!name-label}, @!comment-delims[1]
+                );
+
+                $rendered.substr-rw($rendered.chars, 0) = "%s END %s %s\n".sprintf(
+                    @!comment-delims[0], %t{$!name-label}, @!comment-delims[1]
+                );
+            }
+            return $rendered;
         }
-
-        # Add labels to the rendered string if $!show-labels is True.
-        if $!show-labels {
-            $rendered.substr-rw(0, 0) = "%s BEGIN %s %s\n".sprintf(
-                @!comment-delims[0], %t{$!name-label}, @!comment-delims[1]
-            );
-
-            $rendered.substr-rw($rendered.chars, 0) = "%s END %s %s\n".sprintf(
-                @!comment-delims[0], %t{$!name-label}, @!comment-delims[1]
-            );
-        }
-
-        return $rendered;
     }
 }

@@ -187,21 +187,22 @@ my %simple-page-js = %(
 <% variable %>
   #+end_src
 
-- ~token-escape-char~ (default: ~\~): On rare occasions you may
-  actually want to use the exact character string you are using for
-  your token delimiters in one of your templates. For example, here
-  ~render~ is going to consider this as a token and remove it:
+- ~token-escape-char~ (default: empty string): On rare occasions you
+  may actually want to use the exact character string you are using
+  for your token delimiters in one of your templates. For example,
+  here ~render~ is going to consider this as a token and remove it:
 
   #+begin_src
 did you know we are using token delimiters <!--% and %--> in our templates?
   #+end_src
 
-  To include the token, escape it with ~token-escape-char~:
+  To include the token, escape it with ~token-escape-char~ set to
+  (~\~):
   #+begin_src
 did you know we are using token delimiters \<!--% and %--> in our templates?
   #+end_src
 
-  Set it to an empty string to disable this behaviour.
+  Set it to an empty string to disable the behaviour.
 
 - ~defaults~: Provide a hash of default values that are substituted if
   template hash does not provide a value. For example, passing this

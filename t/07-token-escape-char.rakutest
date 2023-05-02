@@ -6,7 +6,7 @@ plan 2;
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 
-my $nest = Template::Nest::Fast.new( :$template-dir );
+my $nest = Template::Nest::Fast.new( :$template-dir, :token-escape-char('\\') );
 
 my %simple-page = %(
     TEMPLATE => '00-simple-page',

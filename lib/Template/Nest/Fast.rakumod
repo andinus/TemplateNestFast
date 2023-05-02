@@ -27,7 +27,7 @@ class Template::Nest::Fast {
     has Bool $.fixed-indent = False;
 
     # To escape token delimiters.
-    has Str $.token-escape-char = '\\';
+    has Str $.token-escape-char = '';
 
     has %.defaults;
     has $.defaults-namespace-char = '.';

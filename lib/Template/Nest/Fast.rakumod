@@ -83,7 +83,7 @@ class Template::Nest::Fast {
             # magic, I have to comment it). It's important to mutate
             # the template file forwards only. Otherwise all the
             # calculations break.
-            DELIM: for @m.sort(*[0].from) -> $m {
+            DELIM: for @m.sort(*[0].from).reverse -> $m {
                 my Int $start-pos = $m[0].from;
 
                 # If token-escape-char is set then we look behind for
@@ -185,11 +185,6 @@ class Template::Nest::Fast {
 
         my Str $rendered;
 
-        # After mutating the rendered string the positions of those
-        # other variables that need to be substituted changes and so
-        # we need to recalculate it, that is stored in this var.
-        my int $delta = 0;
-
         # Get the indexed version of the template in %t-indexed.
         with (%!templates{%t{$!name-label}}) -> %t-indexed {
             # Read the file.
@@ -212,9 +207,8 @@ class Template::Nest::Fast {
             VAR: for @(%t-indexed<vars>) -> %v {
                 # If the variable is a token-escape-char then simply
                 # remove it.
-                if %v<token-escape-char> {
-                    $rendered.substr-rw(%v<start-pos> + $delta, %v<length>) = '';
-                    $delta -= %v<length>;
+                if $!token-escape-char.chars > 0 && %v<token-escape-char> {
+                    $rendered.substr-rw(%v<start-pos>, %v<length>) = '';
                     next VAR;
                 }
 
@@ -229,11 +223,7 @@ class Template::Nest::Fast {
                 }
 
                 # Replace the template variable.
-                $rendered.substr-rw(%v<start-pos> + $delta, %v<length>) = $append;
-
-                # From delta remove %v<length> and add the length
-                # of string we just appended.
-                $delta += - %v<length> + $append.chars;
+                $rendered.substr-rw(%v<start-pos>, %v<length>) = $append;
             }
         } else {
             die "Unrecognized template: {%t{$!name-label}}";

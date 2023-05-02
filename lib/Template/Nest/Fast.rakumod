@@ -32,6 +32,9 @@ class Template::Nest::Fast {
     has %.defaults;
     has $.defaults-namespace-char = '.';
 
+    # If True, then cache the template file in memory.
+    has $.cache-template = True;
+
     # Template objects after compilation.
     has %!templates;
 
@@ -66,6 +69,7 @@ class Template::Nest::Fast {
 
         # Store the template path.
         %!templates{$t}<path> = $template;
+        %!templates{$t}<file> = $template.slurp if $!cache-template;
 
         my Str $start-delim = @!token-delims[0];
         my Str $end-delim = @!token-delims[1];
@@ -198,7 +202,7 @@ class Template::Nest::Fast {
                 die-on-bad-params value: {$!die-on-bad-params}
                 All variables in template hash must be valid if die-on-bad-params is True.";
         } else {
-            my Str $rendered = %t-indexed<path>.slurp;
+            my Str $rendered = %t-indexed<file> // %t-indexed<path>.slurp;
 
             # Loop over indexed variables, if a variable is not
             # defined in the template hash then we don't proceed.

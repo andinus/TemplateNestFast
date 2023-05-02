@@ -34,13 +34,17 @@ Compatibility Progress:
 [X] token_delims
 #+end_src
 
-Note: ~escape_char~ has been replaced with ~token-escape-char~.
+- Note: ~escape_char~ has been replaced with ~token-escape-char~.
+- Note: ~cache-template~ option has been added and is enabled by default.
 
 - ~name-label~ (default ~TEMPLATE~): Represents the label used for
   identifying the template name in the hash of template variables.
 
 - ~template-dir~: IO object representing the directory where the
   templates are located.
+
+- ~cache-template~ (default: ~True~): If True then the whole template
+  file is cached in memory, this improves performance.
 
 - ~die-on-bad-params~ (default: ~False~): If True, then an attempt to
   populate a template with a variable that doesn't exist (i.e. name
@@ -50,6 +54,8 @@ Note: ~escape_char~ has been replaced with ~token-escape-char~.
   template file but not defined in template hash). Undefined variables
   are replaced with empty string. This is for compatibility with
   Template::Nest (Raku).
+
+  You might want to keep this enabled during development & testing.
 
 - ~show-labels~ (default: ~False~): If True, an string is appended to
   every rendered template which is helpful in identifying which

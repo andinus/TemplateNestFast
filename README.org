@@ -332,6 +332,22 @@ Output:
 
 * News
 
+** v0.2.1 - 2023-05-04
+
++ Fixed parsing bug with non-string values in template hash
+
+  Template hash with non-string values like:
+  #+begin_src raku
+my %template = %(
+    TEMPLATE => 'simple-template',
+    count => 200 # will result in failure
+);
+  #+end_src
+
+  failed to parse prior to v0.2.1, this has been fixed in v0.2.1.
+
++ Improve error message for invalid template hash.
+
 ** v0.2.0 - 2023-05-02
 
 + Achieved options compatibility with Template::Nest (Raku).

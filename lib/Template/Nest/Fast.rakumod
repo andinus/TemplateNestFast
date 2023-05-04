@@ -176,10 +176,10 @@ class Template::Nest::Fast {
     #| keys where the value is another Hash or a List.
     method !parse($var, Int $level! --> Str) {
         given $var {
-            when Str  { return $var.Str }
             # trim-trailing to account for files ending on new line.
             when Hash { return self.render($var, $level + 1).trim-trailing }
             when List { return $var.map({self.render($_, $level + 1).trim-trailing}).join }
+            default { return $var.Str }
         }
     }
 

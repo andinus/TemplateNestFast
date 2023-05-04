@@ -186,8 +186,8 @@ class Template::Nest::Fast {
     #| render method renders the template, given a template hash.
     #| $level sets the indent level.
     method render(%t, Int $level = 0 --> Str) {
-        die "Invalid template, no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
-        die "Unrecognized template: {%t{$!name-label}}" without %!templates{%t{$!name-label}};
+        die "Encountered hash with no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
+        die "Unrecognized template (not indexed): {%t{$!name-label}}" without %!templates{%t{$!name-label}};
 
         # Get the indexed version of the template in %t-indexed.
         my %t-indexed := %!templates{%t{$!name-label}};

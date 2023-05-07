@@ -332,6 +332,10 @@ Output:
 
 * News
 
+** v0.2.2 - 2023-05-07
+
++ Fixed failing tests.
+
 ** v0.2.1 - 2023-05-04
 
 + Fixed parsing bug with non-string values in template hash

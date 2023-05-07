@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 8;
+plan 9;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
@@ -146,4 +146,31 @@ throws-like(
     { $nest.render(%invalid-page-more) }, Exception,
     "Dies with invalid template hash (i.e. without name label) that is nested.",
     message => /^"Encountered hash with no name-label " .*/
+);
+
+my %simple-page-arrays = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => [
+                         # Hash passed.
+                         %(
+                             TEMPLATE => '01-simple-component',
+                             variable => 'Simple Variable in Simple Component'
+                         ),
+                         # Can pass string as well.
+                         "<strong>Another test</strong>",
+                         # Or another level of nesting.
+                         [
+                             %(
+                                 TEMPLATE => '01-simple-component',
+                                 variable => 'Simple Variable in Simple Component'
+                             ),
+                             "<strong>Another nested test 2</strong>"
+                         ]
+                     ]
+);
+is(
+    $nest.render(%simple-page-arrays),
+    $output-dir.add('12-simple-page-arrays.html').slurp,
+    "Simple template is rendered."
 );

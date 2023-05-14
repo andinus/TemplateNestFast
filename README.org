@@ -19,6 +19,10 @@ sponsoring for the development of this module. He authored
 
 ** Options
 
+- Note: The options have their hypen counterparts. For example, ~comment_delims~
+  is now ~comment-delims~. However, for compatibility with other ::Nest
+  versions, underscored options are supported on object creation.
+
 Compatibility Progress:
 #+begin_src
 [X] comment_delims
@@ -331,6 +335,44 @@ Output:
 #+end_src
 
 * News
+
+** v0.2.3 - 2023-05-14
+
++ Add support for underscored options.
+
+  This makes the module close to drop-in for projects that use other Nest
+  versions with support for underscored options.
+
++ Add support for Str, nested List when parsing hash template values.
+
+  While parsing hash template values, when we encounter a list we assume
+  that all the elements will be Hash. This breaks that assumption and
+  allows for the elements to be of type Hash, Str or even List.
+
+  After this change, template hash like this will be supported:
+  #+begin_src raku
+my %simple-page-arrays = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => [
+                         # Hash passed.
+                         %(
+                             TEMPLATE => '01-simple-component',
+                             variable => 'Simple Variable in Simple Component'
+                         ),
+                         # Can pass string as well.
+                         "<strong>Another test</strong>",
+                         # Or another level of nesting.
+                         [
+                             %(
+                                 TEMPLATE => '01-simple-component',
+                                 variable => 'Simple Variable in Simple Component'
+                             ),
+                             "<strong>Another nested test 2</strong>"
+                         ]
+                     ]
+);
+  #+end_src
 
 ** v0.2.2 - 2023-05-07
 

@@ -6,7 +6,7 @@
 class Template::Nest::Fast {
     has Str @.token-delims = ['<!--%', '%-->'];
     has Str $.name-label = 'TEMPLATE';
-    has IO $.template-dir is required;
+    has IO $.template-dir;
     has Str $.template-extension = 'html';
 
     # If True, add comment to the rendered output to make it easier to
@@ -30,17 +30,43 @@ class Template::Nest::Fast {
     has Str $.token-escape-char = '';
 
     has %.defaults;
-    has $.defaults-namespace-char = '.';
+    has Str $.defaults-namespace-char = '.';
 
     # If True, then cache the template file in memory.
-    has $.cache-template = True;
+    has Bool $.cache-template = True;
 
     # Template objects after compilation.
     has %!templates;
 
     #| TWEAK reads all the files in template-dir ending with '.html'
     #| extension and indexes them.
-    submethod TWEAK() {
+    submethod TWEAK(
+        :@comment_delims,
+        :@token_delims,
+
+        Str  :$name_label,
+        Bool :$show_labels,
+        Str  :$template_dir,
+        Str  :$template_ext,
+        Bool :$fixed_indent,
+        Bool :$die_on_bad_params,
+        Str  :$defaults_namespace_char,
+    ) {
+        # Support underscored options for backwards compatibility.
+        @!token-delims   = @token_delims   if @token_delims.elems;
+        @!comment-delims = @comment_delims if @comment_delims.elems;
+
+        $!name-label              = $_ with $name_label;
+        $!show-labels             = $_ with $show_labels;
+        $!fixed-indent            = $_ with $fixed_indent;
+        $!die-on-bad-params       = $_ with $die_on_bad_params;
+        $!template-extension      = $_ with $template_ext;
+        $!defaults-namespace-char = $_ with $defaults_namespace_char;
+
+        $!template-dir = $_.IO with $template_dir;
+
+        die "template-dir option must be set." without $!template-dir;
+
         # Grab all files ending with $!template-extension recursively.
         # If the extension is set to an empty string, grab all the
         # files.

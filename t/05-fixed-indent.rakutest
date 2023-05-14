@@ -1,12 +1,13 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 2;
+plan 3;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 
 my $nest = Template::Nest::Fast.new( :$template-dir, :fixed-indent );
+my $nest-underscored = Template::Nest::Fast.new( :$template-dir, :fixed_indent );
 
 my %simple-page = %(
     TEMPLATE => '00-simple-page',
@@ -20,6 +21,12 @@ is(
     $nest.render(%simple-page),
     $output-dir.add('07-simple-page-fixed-indent.html').slurp,
     "Simple template is rendered with fixed-indent = True."
+);
+
+is(
+    $nest-underscored.render(%simple-page),
+    $nest.render(%simple-page),
+    "Simple template is rendered with fixed-indent = True and underscored option."
 );
 
 my %complex-page = %(

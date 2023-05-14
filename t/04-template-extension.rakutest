@@ -1,13 +1,14 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 2;
+plan 3;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 
 my $nest = Template::Nest::Fast.new: :$template-dir, :template-extension('');
 my $nest-js = Template::Nest::Fast.new: :$template-dir, :template-extension('js');
+my $nest-js-underscored = Template::Nest::Fast.new: :$template-dir, :template_ext('js');
 
 my %simple-page = %(
     TEMPLATE => '00-simple-page.html',
@@ -34,4 +35,10 @@ is(
     $nest-js.render(%simple-page-js),
     $output-dir.add('06-main-template-extension.js').slurp,
     "Simple template is rendered with template-extension as 'js'."
+);
+
+is(
+    $nest-js-underscored.render(%simple-page-js),
+    $nest-js.render(%simple-page-js),
+    "Simple template is rendered with template-extension as 'js' and underscored option."
 );

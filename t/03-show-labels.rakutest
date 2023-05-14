@@ -1,14 +1,19 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 2;
+plan 3;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 
 my $nest = Template::Nest::Fast.new( :$template-dir, :show-labels );
+
 my $nest-alt = Template::Nest::Fast.new( # checking if alt delim works.
     :$template-dir, :show-labels, comment-delims => ['<!--!', '!-->']
+);
+
+my $nest-alt-underscored = Template::Nest::Fast.new( # checking if underscored options work.
+    :$template-dir, :show_labels, comment_delims => ['<!--!', '!-->']
 );
 
 my %simple-page = %(
@@ -31,4 +36,10 @@ is(
     $nest-alt.render(%simple-page),
     $output-dir.add('05-simple-page-with-labels-alt-delims.html').slurp,
     "Simple template is rendered with show-labels = True and alternate comment delims."
+);
+
+is(
+    $nest-alt-underscored.render(%simple-page),
+    $nest-alt.render(%simple-page),
+    "Simple template is rendered underscored options."
 );

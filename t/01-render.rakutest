@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 9;
+plan 11;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
@@ -76,6 +76,26 @@ is(
     "Simple template is rendered."
 );
 
+# test with underscored options.
+with Template::Nest::Fast.new(
+    template_dir => $template-dir.absolute, :name_label<NAME>
+) -> $nest-alt {
+    is(
+        $nest-alt.render(
+            %(
+                NAME => '00-simple-page',
+                variable => 'Simple Variable',
+                simple_component => %(
+                    NAME => '01-simple-component',
+                    variable => 'Simple Variable in Simple Component'
+                )
+            )
+        ),
+        $output-dir.add('01-simple-page.html').slurp,
+        "Simple template is rendered with underscored option."
+    );
+}
+
 # render test with simple string, template substitution and different
 # name-label.
 with Template::Nest::Fast.new(:$template-dir, :name-label<NAME>) -> $nest-alt {
@@ -91,7 +111,7 @@ with Template::Nest::Fast.new(:$template-dir, :name-label<NAME>) -> $nest-alt {
             )
         ),
         $output-dir.add('01-simple-page.html').slurp,
-        "Simple template is rendered."
+        "Simple template is rendered with alternate name-label."
     );
 }
 
@@ -173,4 +193,11 @@ is(
     $nest.render(%simple-page-arrays),
     $output-dir.add('12-simple-page-arrays.html').slurp,
     "Simple template is rendered."
+);
+
+# should die if template-dir is unspecified.
+throws-like(
+    { Template::Nest::Fast.new() }, Exception,
+    "Dies with unspecified template-dir.",
+    message => /^"template-dir option must be set."$/
 );

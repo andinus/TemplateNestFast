@@ -1,10 +1,11 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 4;
+plan 5;
 
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 my $nest = Template::Nest::Fast.new( :$template-dir, :die-on-bad-params );
+my $nest-underscored = Template::Nest::Fast.new( :$template-dir, :die_on_bad_params );
 my $nest-bad = Template::Nest::Fast.new( :$template-dir, die-on-bad-params => False );
 
 my %simple-page = %(
@@ -29,6 +30,12 @@ my %simple-page-bad-params-more = %(
     TEMPLATE => '00-simple-page',
     variable => 'Simple Variable',
     bad_param => 'Simple Component',
+);
+
+throws-like(
+    { $nest-underscored.render(%simple-page-bad-params) }, Exception,
+    "Dies on bad params by default on underscored option.",
+    message => /"All variables in template hash must be valid if die-on-bad-params is True"/
 );
 
 throws-like(

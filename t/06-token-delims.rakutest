@@ -1,12 +1,14 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 2;
+plan 3;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 
 my $nest = Template::Nest::Fast.new( :$template-dir, :token-delims('<%', '%>') );
+my $nest-underscored = Template::Nest::Fast.new( :$template-dir, :token_delims('<%', '%>') );
+
 my $nest-alt = Template::Nest::Fast.new( :$template-dir, :token-delims('<%', '%>'), :fixed-indent );
 
 my %simple-page = %(
@@ -23,6 +25,12 @@ is(
     $nest.render(%simple-page),
     $output-dir.add('01-simple-page.html').slurp,
     "Simple page with alternate token delim is rendered."
+);
+
+is(
+    $nest-underscored.render(%simple-page),
+    $nest.render(%simple-page),
+    "Simple page with alternate token delim is rendered [& underscored option]."
 );
 
 my %simple-page-alt = %(

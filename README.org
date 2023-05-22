@@ -271,29 +271,6 @@ my $nest = Template::Nest::Fast.new(
 
 ** Example
 
-This is a simple example that injects a variable in a template. We use
-another template as a component as well.
-
-#+begin_src raku
-use Template::Nest::Fast;
-
-# Create a nest object.
-my $nest = Template::Nest::Fast.new( template-dir => 'templates/'.IO );
-
-# Declare template structure.
-my %simple-page = %(
-    TEMPLATE => '00-simple-page',
-    variable => 'Simple Variable',
-    simple_component => %(
-        TEMPLATE => '01-simple-component',
-        variable => 'Simple Variable in Simple Component'
-    )
-);
-
-# Render the page.
-put $nest.render(%simple-page);
-#+end_src
-
 Templates:
 ~templates/00-simple-page.html~:
 #+begin_src html
@@ -317,6 +294,31 @@ Templates:
 <p><!--% variable %--></p>
 #+end_src
 
+*** Simple template hash
+
+This is a simple example that injects a variable in a template. We use
+another template as a component as well.
+
+#+begin_src raku
+use Template::Nest::Fast;
+
+# Create a nest object.
+my $nest = Template::Nest::Fast.new( template-dir => 'templates/'.IO );
+
+# Declare template structure.
+my %simple-page = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        TEMPLATE => '01-simple-component',
+        variable => 'Simple Variable in Simple Component'
+    )
+);
+
+# Render the page.
+put $nest.render(%simple-page);
+#+end_src
+
 Output:
 #+begin_src html
 <!DOCTYPE html>
@@ -330,6 +332,70 @@ Output:
     <p>A fairly simple page to test the performance of Template::Nest.</p>
     <p>Simple Variable</p>
     <p>Simple Variable in Simple Component</p>
+  </body>
+</html>
+#+end_src
+
+*** Array of template hash
+
+Array of template hash can be passed to ~render~ too.
+
+#+begin_src raku
+$nest.render(
+    [
+        %( TEMPLATE => '01-simple-component',  variable => 'This is a variable' ),
+        %( TEMPLATE => '01-simple-component',  variable => 'This is another variable' )
+    ]
+)
+#+end_src
+
+Output:
+#+begin_src html
+<p>This is a variable</p><p>This is another variable</p>
+#+end_src
+
+*** Array to template variable
+
+Template variable can be a string, another template hash or an array too. The
+array itself can contain template hash, string or nested array.
+
+#+begin_src raku
+my %simple-page-arrays = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => [
+                         # Hash passed.
+                         %(
+                             TEMPLATE => '01-simple-component',
+                             variable => 'Simple Variable in Simple Component'
+                         ),
+                         # Can pass string as well.
+                         "<strong>Another test</strong>",
+                         # Or another level of nesting.
+                         [
+                             %(
+                                 TEMPLATE => '01-simple-component',
+                                 variable => 'Simple Variable in Simple Component'
+                             ),
+                             "<strong>Another nested test 2</strong>"
+                         ]
+                     ]
+);
+#+end_src
+
+Output:
+#+begin_src html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simple Page</title>
+  </head>
+  <body>
+    <p>A fairly simple page to test the performance of Template::Nest.</p>
+    <p>Simple Variable</p>
+    <p>Simple Variable in Simple Component</p><strong>Another test</strong><p>Simple Variable in Simple Component</p><strong>Another nested test 2</strong>
   </body>
 </html>
 #+end_src

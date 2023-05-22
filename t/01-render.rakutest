@@ -210,6 +210,6 @@ is(
             %( TEMPLATE => '01-simple-component',  variable => 'This is another variable' )
         ]
     ),
-    $output-dir.add('13-render-with-array-of-template-hash.html').slurp,
+    $output-dir.add('13-render-with-array-of-template-hash.html').slurp.trim-trailing,
     "render with array of template hash."
 );

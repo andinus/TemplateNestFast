@@ -1,29 +1,26 @@
-#| Template::Nest::Fast is a high-performance template engine module
-#| for Raku, designed to process nested templates quickly and
-#| efficiently. This module improves on the original Template::Nest
-#| module by caching the index of positions of variables, resulting in
-#| significantly faster processing times.
+#| Template::Nest::Fast is a high-performance template engine module for Raku,
+#| designed to process nested templates quickly and efficiently. This module
+#| improves on the original Template::Nest module by caching the index of
+#| positions of variables, resulting in significantly faster processing times.
 class Template::Nest::Fast {
     has Str @.token-delims = ['<!--%', '%-->'];
     has Str $.name-label = 'TEMPLATE';
     has IO $.template-dir;
     has Str $.template-extension = 'html';
 
-    # If True, add comment to the rendered output to make it easier to
-    # identify which template the output is from.
+    # If True, add comment to the rendered output to make it easier to identify
+    # which template the output is from.
     has Bool $.show-labels = False;
 
-    # Used in conjuction with $.show-labels. If the template is not
-    # HTML then this can be used to change output label.
+    # Used in conjuction with $.show-labels. If the template is not HTML then
+    # this can be used to change output label.
     has Str @.comment-delims = ['<!--', '-->'];
 
-    # If True, then an attempt to populate a template with a variable
-    # that doesn't exist (i.e. name not found in template) results in
-    # an error.
+    # If True, then an attempt to populate a template with a variable that
+    # doesn't exist (i.e. name not found in template) results in an error.
     has Bool $.die-on-bad-params = False;
 
-    # Intended to improve readability when inspecting nested
-    # templates.
+    # Intended to improve readability when inspecting nested templates.
     has Bool $.fixed-indent = False;
 
     # To escape token delimiters.
@@ -38,8 +35,8 @@ class Template::Nest::Fast {
     # Template objects after compilation.
     has %!templates;
 
-    #| TWEAK reads all the files in template-dir ending with '.html'
-    #| extension and indexes them.
+    #| TWEAK reads all the files in template-dir ending with '.html' extension
+    #| and indexes them.
     submethod TWEAK(
         :@comment_delims,
         :@token_delims,
@@ -67,9 +64,8 @@ class Template::Nest::Fast {
 
         die "template-dir option must be set." without $!template-dir;
 
-        # Grab all files ending with $!template-extension recursively.
-        # If the extension is set to an empty string, grab all the
-        # files.
+        # Grab all files ending with $!template-extension recursively. If the
+        # extension is set to an empty string, grab all the files.
         my IO @stack = $!template-dir, ;
         my IO @templates = gather while @stack {
             with @stack.pop {
@@ -85,10 +81,9 @@ class Template::Nest::Fast {
 
     #| index-template reads a template and prepares it for render.
     method !index-template(IO $template) {
-        # Get template name relative to $!template-dir and remove
-        # extension. Remove the extension and the dot. If
-        # $!template-extension is empty then there is no extension
-        # length.
+        # Get template name relative to $!template-dir and remove extension.
+        # Remove the extension and the dot. If $!template-extension is empty
+        # then there is no extension length.
         my Int $extension-length =  $_ eq '' ?? 0 !! (.chars + 1) with $!template-extension;
         my Str $t = $template.relative($!template-dir).substr(0, *-$extension-length);
         my Str $f = $template.slurp;
@@ -106,24 +101,22 @@ class Template::Nest::Fast {
             # Initialize with an empty list.
             %!templates{$t}<vars> = [];
 
-            # For every match we have start, end position of each
-            # delim and the variable.
+            # For every match we have start, end position of each delim and the
+            # variable.
             #
-            # We sort @m by the start delim's position. (Does some
-            # magic, I have to comment it). It's important to mutate
-            # the template file forwards only. Otherwise all the
-            # calculations break.
+            # We sort @m by the start delim's position. It's important to mutate
+            # the template file forwards only. Otherwise all the calculations
+            # break.
             DELIM: for @m.sort(*[0].from).reverse -> $m {
                 my Int $start-pos = $m[0].from;
 
-                # If token-escape-char is set then we look behind for
-                # it, if it is present then this token is skipped.
+                # If token-escape-char is set then we look behind for it, if it
+                # is present then this token is skipped.
                 with $!token-escape-char {
                     my Int $escape-char-start-pos = $start-pos - .chars;
 
-                    # token can be at the beginning of file and that
-                    # might cause substr() to fail so we first check
-                    # for range.
+                    # token can be at the beginning of file and that might cause
+                    # substr() to fail so we first check for range.
                     if (.chars > 0 && $escape-char-start-pos > 0
                         && $f.substr($escape-char-start-pos, .chars) eq $_) {
                         # vars that have token-escape-char set as True are
@@ -137,9 +130,8 @@ class Template::Nest::Fast {
                     }
                 }
 
-                # We need to extract the indent level of this
-                # variable. If fixed-indent is True then this info is
-                # used.
+                # We need to extract the indent level of this variable. If
+                # fixed-indent is True then this info is used.
                 my Int $indent-space;
                 with $f.rindex("\n", $start-pos) -> $newline-pos {
                     $indent-space = $start-pos - $newline-pos - 1;
@@ -158,24 +150,23 @@ class Template::Nest::Fast {
                 );
             }
 
-            # Store template keys as unordered set. We need this later
-            # to verify if template hash has all the required
-            # variables.
+            # Store template keys as unordered set. We need this later to verify
+            # if template hash has all the required variables.
             %!templates{$t}<keys> = Set.new( %!templates{$t}<vars>.map(*<name>) );
         }
     }
 
-    #| get-default-value takes a key and returns the default value for
-    #| it. It looks up the %defaults hash, if none is found then it
-    #| returns an empty string.
+    #| get-default-value takes a key and returns the default value for it. It
+    #| looks up the %defaults hash, if none is found then it returns an empty
+    #| string.
     method !get-default-value($n --> Str) {
         my $value;
 
         with %!defaults {
             $value = %!defaults{$n};
 
-            # if value not found in defaults hash then namespace and look
-            # for value.
+            # if value not found in defaults hash then namespace and look for
+            # value.
             if $!defaults-namespace-char.chars > 0 {
                 without $value {
                     my @k = $n.split($!defaults-namespace-char).reverse;
@@ -192,14 +183,13 @@ class Template::Nest::Fast {
         return $value // '';
     }
 
-    #| parse consumes values of keys of the template object and
-    #| returns the final string that needs to be replaced with that
-    #| key.
+    #| parse consumes values of keys of the template object and returns the
+    #| final string that needs to be replaced with that key.
     #|
     #| my %t = %( TEMPLATE => 'test', xyz => 'hi' )
     #|
-    #| parse here consumes 'xyz' and returns 'hi', it can also handle
-    #| keys where the value is another Hash or a List.
+    #| parse here consumes 'xyz' and returns 'hi', it can also handle keys where
+    #| the value is another Hash or a List.
     method !parse($var, Int $level! --> Str) {
         given $var {
             # trim-trailing to account for files ending on new line.
@@ -209,8 +199,8 @@ class Template::Nest::Fast {
         }
     }
 
-    #| render method renders the template, given a template hash.
-    #| $level sets the indent level.
+    #| render method renders the template, given a template hash or array of
+    #| template hash. $level sets the indent level.
     method render(%t, Int $level = 0 --> Str) {
         die "Encountered hash with no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
         die "Unrecognized template (not indexed): {%t{$!name-label}}" without %!templates{%t{$!name-label}};
@@ -218,9 +208,9 @@ class Template::Nest::Fast {
         # Get the indexed version of the template in %t-indexed.
         my %t-indexed := %!templates{%t{$!name-label}};
 
-        # Check for bad-params if $!die-on-bad-params is set to
-        # true. We check if the keys in template hash are all
-        # present in template file except for the $!name-label.
+        # Check for bad-params if $!die-on-bad-params is set to true. We check
+        # if the keys in template hash are all present in template file except
+        # for the $!name-label.
         if $!die-on-bad-params == True && (%t.keys (-) %t-indexed<keys>) !(==) $!name-label {
             die "
                 Variables in template hash: {%t.keys.grep(* ne $!name-label).sort.gist}
@@ -230,8 +220,8 @@ class Template::Nest::Fast {
         } else {
             my Str $rendered = %t-indexed<file> // %t-indexed<path>.slurp;
 
-            # Loop over indexed variables, if a variable is not
-            # defined in the template hash then we don't proceed.
+            # Loop over indexed variables, if a variable is not defined in the
+            # template hash then we don't proceed.
             for @(%t-indexed<vars>) -> %v {
                 # Remove escape characters from template file.
                 if ($!token-escape-char.chars > 0 && %v<token-escape-char> == True) {

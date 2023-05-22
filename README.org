@@ -336,6 +336,31 @@ Output:
 
 * News
 
+** v0.2.4 - 2023-05-22
+
++ Add support for passing array to render method.
+
+  Template::Nest [Perl5] supports this.
+
+  Basic Example:
+  #+begin_src raku
+$nest.render(
+    [
+        %( TEMPLATE => '01-simple-component',  variable => 'This is a variable' ),
+        %( TEMPLATE => '01-simple-component',  variable => 'This is another variable' )
+    ]
+)
+  #+end_src
+
+  Output:
+  #+begin_src html
+<p>This is a variable</p><p>This is another variable</p>
+  #+end_src
+
++ Add examples for passing array to render method and passing array to a
+  template variable.
+
+
 ** v0.2.3 - 2023-05-14
 
 + Add support for underscored options.

@@ -199,17 +199,19 @@ class Template::Nest::Fast {
         }
     }
 
-    subset Template-Hash-or-List where * ~~ Hash | List;
-
     #| render method renders the template, given a template hash or list of
     #| template hash. $level sets the indent level.
-    method render(Template-Hash-or-List $t, Int $level = 0 --> Str) {
-        return self!parse($t, $level) if $t ~~ List;
+    multi method render(List $t, Int $level = 0 --> Str) {
+        return self!parse($t, $level);
+    }
 
-        # If not list, then expecting a template hash.
-        my %t = $t;
+    multi method render(%t, Int $level = 0 --> Str) {
         die "Encountered hash with no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
-        die "Unrecognized template (not indexed): {%t{$!name-label}}" without %!templates{%t{$!name-label}};
+
+        # If the template is not indexed already then index if it exists.
+        without (%!templates{%t{$!name-label}}) {
+            die "Unrecognized template (not indexed): {%t{$!name-label}}";
+        }
 
         # Get the indexed version of the template in %t-indexed.
         my %t-indexed := %!templates{%t{$!name-label}};

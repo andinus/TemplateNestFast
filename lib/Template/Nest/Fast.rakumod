@@ -32,6 +32,12 @@ class Template::Nest::Fast {
     # If True, then cache the template file in memory.
     has Bool $.cache-template = True;
 
+    # When Advanced Indexing is enabled, ::Fast stores the timestamp of template
+    # file index and if the file on disk is newer, it re-indexes the file. It
+    # also indexes files that are present on disk but weren't indexed when
+    # ::Fast was initialized.
+    has Bool $.advanced-indexing = False;
+
     # Template objects after compilation.
     has %!templates;
 
@@ -90,7 +96,8 @@ class Template::Nest::Fast {
 
         # Store the template path.
         %!templates{$t}<path> = $template;
-        %!templates{$t}<file> = $template.slurp if $!cache-template;
+        %!templates{$t}<modified> = $template.modified if $!advanced-indexing;
+        %!templates{$t}<file-contents> = $f if $!cache-template;
 
         my Str $start-delim = @!token-delims[0];
         my Str $end-delim = @!token-delims[1];
@@ -208,13 +215,31 @@ class Template::Nest::Fast {
     multi method render(%t, Int $level = 0 --> Str) {
         die "Encountered hash with no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
 
-        # If the template is not indexed already then index if it exists.
         without (%!templates{%t{$!name-label}}) {
-            die "Unrecognized template (not indexed): {%t{$!name-label}}";
+            # If the template is not indexed already then index if it exists
+            # when $!advanced-indexing is enabled.
+            if $!advanced-indexing == True {
+                self!index-template(
+                    "%s%s".sprintf(
+                        $!template-dir.add(%t{$!name-label}).absolute,
+                        # Add extension if present.
+                        $!template-extension.chars > 0 ?? '.%s'.sprintf($!template-extension) !! ''
+                    ).IO
+                );
+            } else {
+                die "Unrecognized template (not indexed): {%t{$!name-label}}";
+            }
         }
 
         # Get the indexed version of the template in %t-indexed.
         my %t-indexed := %!templates{%t{$!name-label}};
+
+        # Re-index the file if file-on-disk is newer than indexed version.
+        if ($!cache-template
+            && $!advanced-indexing
+            && %t-indexed<path>.modified > %t-indexed<modified>) {
+            self!index-template(%t-indexed<path>);
+        }
 
         # Check for bad-params if $!die-on-bad-params is set to true. We check
         # if the keys in template hash are all present in template file except
@@ -226,7 +251,7 @@ class Template::Nest::Fast {
                 die-on-bad-params value: {$!die-on-bad-params}
                 All variables in template hash must be valid if die-on-bad-params is True.";
         } else {
-            my Str $rendered = %t-indexed<file> // %t-indexed<path>.slurp;
+            my Str $rendered = %t-indexed<file-contents> // %t-indexed<path>.slurp;
 
             # Loop over indexed variables, if a variable is not defined in the
             # template hash then we don't proceed.

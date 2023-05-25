@@ -1,0 +1,50 @@
+use Test;
+use Template::Nest::Fast;
+
+plan 2;
+
+my IO $output-dir = $*PROGRAM.IO.parent.add('output');
+my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
+my $nest = Template::Nest::Fast.new( :$template-dir, :advanced-indexing );
+
+my %simple-page = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        TEMPLATE => '90-simple-component',
+        variable => 'Simple Variable in Simple Component'
+    )
+);
+
+my IO $non-existent-template = $template-dir.add('90-simple-component.html');
+
+# Create a temporary template after ::Fast initialisation to test if non-indexed
+# templates are indexed if they exist on disk.
+$non-existent-template.spurt(
+    $template-dir.add('01-simple-component.html').slurp
+);
+
+is(
+    $nest.render(%simple-page),
+    $output-dir.add('01-simple-page.html').slurp,
+    "Non existent template is indexed."
+);
+
+# Modified template.
+$non-existent-template.spurt('<p><!--% new_variable %--></p>');
+my %simple-page-alt = %(
+    TEMPLATE => '00-simple-page',
+    variable => 'Simple Variable',
+    simple_component => %(
+        TEMPLATE => '90-simple-component',
+        new_variable => 'Simple Variable in Simple Component'
+    )
+);
+
+is(
+    $nest.render(%simple-page-alt),
+    $output-dir.add('01-simple-page.html').slurp,
+    "Modified template is indexed and rendered.."
+);
+
+unlink $non-existent-template;

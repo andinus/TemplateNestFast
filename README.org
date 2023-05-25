@@ -264,6 +264,11 @@ my $nest = Template::Nest::Fast.new(
   Note: To disable this behaviour set ~defaults-namespace-char~ to an
   empty string.
 
+- ~advanced-indexing~ (default: False): When enabled, ~::Fast~ stores the
+  timestamp of template file index and if the file on disk is newer, it
+  re-indexes the file. It also indexes files that are present on disk but
+  weren't indexed when ~::Fast~ was initialized.
+
 ** Methods
 
 - ~render~: Converts a template structure to output text. See Example
@@ -402,6 +407,14 @@ Output:
 
 * News
 
+** v0.2.5 - 2023-05-25
+
++ Add advanced indexing option.
+
+  When enabled, ~::Fast~ stores the timestamp of template file index and if the
+  file on disk is newer, it re-indexes the file. It also indexes files that are
+  present on disk but weren't indexed when ~::Fast~ was initialized.
+
 ** v0.2.4 - 2023-05-22
 
 + Add support for passing array to render method.
@@ -425,7 +438,6 @@ $nest.render(
 
 + Add examples for passing array to render method and passing array to a
   template variable.
-
 
 ** v0.2.3 - 2023-05-14
 

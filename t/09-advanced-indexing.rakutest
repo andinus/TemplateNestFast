@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 2;
+plan 4;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
@@ -48,3 +48,18 @@ is(
 );
 
 unlink $non-existent-template;
+
+# should die with vanished template file. the template is still in index.
+throws-like(
+    { $nest.render(%simple-page-alt) }, Exception,
+    "Dies with vanished template file",
+    message => /"Template file vanished: " .*/
+);
+
+# should die with non-existent template file. the template is deleted from index
+# after it has vanished.
+throws-like(
+    { $nest.render(%simple-page-alt) }, Exception,
+    "Dies with non-existent template file",
+    message => /"Unrecognized template (not indexed): " .*/
+);

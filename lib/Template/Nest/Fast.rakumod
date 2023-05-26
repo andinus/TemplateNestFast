@@ -206,6 +206,17 @@ class Template::Nest::Fast {
         }
     }
 
+    #| path-from-label method returns the template file path given the name
+    #| label.
+    method !path-from-label(Str $label --> IO) {
+        return "%s%s".sprintf(
+            $!template-dir.add($label).absolute,
+
+            # Add extension if present.
+            $!template-extension.chars > 0 ?? '.%s'.sprintf($!template-extension) !! ''
+        ).IO;
+    }
+
     #| render method renders the template, given a template hash or list of
     #| template hash. $level sets the indent level.
     multi method render(List $t, Int $level = 0 --> Str) {
@@ -215,19 +226,17 @@ class Template::Nest::Fast {
     multi method render(%t, Int $level = 0 --> Str) {
         die "Encountered hash with no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
 
+        # If the template is not indexed already then index if it exists when
+        # $!advanced-indexing is enabled.
         without (%!templates{%t{$!name-label}}) {
-            # If the template is not indexed already then index if it exists
-            # when $!advanced-indexing is enabled.
-            if $!advanced-indexing == True {
-                self!index-template(
-                    "%s%s".sprintf(
-                        $!template-dir.add(%t{$!name-label}).absolute,
-                        # Add extension if present.
-                        $!template-extension.chars > 0 ?? '.%s'.sprintf($!template-extension) !! ''
-                    ).IO
-                );
+            my IO $t = self!path-from-label(%t{$!name-label});
+
+            if $!advanced-indexing && $t.f {
+                self!index-template(self!path-from-label(%t{$!name-label}));
             } else {
-                die "Unrecognized template (not indexed): {%t{$!name-label}}";
+                die "
+                    Unrecognized template (not indexed): {%t{$!name-label}}
+                    Expected template path: {$t.absolute}";
             }
         }
 

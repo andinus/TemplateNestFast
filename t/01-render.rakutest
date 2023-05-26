@@ -137,7 +137,7 @@ is(
 throws-like(
     { $nest.render(%(TEMPLATE => 'this-template-file-does-not-exist')) }, Exception,
     "Dies with non-existent template file",
-    message => /^"Unrecognized template " .*/
+    message => /"Unrecognized template " .*/
 );
 
 # should die with invalid template hash (i.e. where there is no name

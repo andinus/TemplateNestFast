@@ -243,6 +243,15 @@ class Template::Nest::Fast {
         # Get the indexed version of the template in %t-indexed.
         my %t-indexed := %!templates{%t{$!name-label}};
 
+        # Check if template file still exists, if not then we cannot proceed. We
+        # might be able to proceed here if the template file is in memory but
+        # this most likely means an error anyways so we die instead.
+        unless %t-indexed<path>.f {
+            # Remove the template from index.
+            %!templates{%t{$!name-label}}:delete;
+            die "Template file vanished: {%t-indexed<path>.absolute}";
+        }
+
         # Re-index the file if file-on-disk is newer than indexed version.
         if ($!cache-template
             && $!advanced-indexing

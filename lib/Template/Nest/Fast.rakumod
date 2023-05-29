@@ -265,7 +265,7 @@ class Template::Nest::Fast {
         if $!die-on-bad-params == True && (%t.keys (-) %t-indexed<keys>) !(==) $!name-label {
             die "
                 Variables in template hash: {%t.keys.grep(* ne $!name-label).sort.gist}
-                Variables in template file: {%t-indexed<keys>.sort.gist}
+                Variables in template file: {%t-indexed<keys>.keys.sort.gist}
                 die-on-bad-params value: {$!die-on-bad-params}
                 All variables in template hash must be valid if die-on-bad-params is True.";
         } else {

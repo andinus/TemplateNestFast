@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 5;
+plan 6;
 
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
 my $nest = Template::Nest::Fast.new( :$template-dir, :die-on-bad-params );
@@ -48,6 +48,8 @@ throws-like(
     "Dies on bad params with same number of keys.",
     message => /"All variables in template hash must be valid if die-on-bad-params is True"/
 );
+
+lives-ok { $nest.render(%simple-page) }, "Lives on good params if die-on-bad-params is True.";
 
 lives-ok { $nest-bad.render(%simple-page) }, "Lives on good params.";
 lives-ok { $nest-bad.render(%simple-page-bad-params) }, "Lives on bad params if `die-on-bad-params' is False.";

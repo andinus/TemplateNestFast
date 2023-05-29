@@ -407,6 +407,20 @@ Output:
 
 * News
 
+** v0.2.6 - 2023-05-29
+
++ Improve error message for die-on-bad-params.
+
++ Add more tests for advanced-indexing & die-on-bad-params.
+
++ Handle template file vanishing errors.
+
+  Handles errors where the template file has vanished.
+
++ Fixed a bug where ::Fast does not die on non-existent template file.
+
+  This was introduced in v0.2.5 with advanced indexing option.
+
 ** v0.2.5 - 2023-05-25
 
 + Add advanced indexing option.

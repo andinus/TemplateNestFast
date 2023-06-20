@@ -3,19 +3,32 @@
 
 * Documentation
 
-~Template::Nest::Fast~ is a high-performance template engine module for
-Raku, designed to process nested templates quickly and efficiently.
-This module improves on the original ~Template::Nest~ module by caching
-the index of positions of variables, resulting in significantly faster
-processing times.
+~Template::Nest::Fast~ is a high-performance template engine module for Raku,
+designed to process nested templates quickly and efficiently. This module
+improves on the original ~Template::Nest~ module by caching the index of
+positions of variables, resulting in significantly faster processing times.
 
 For more details on ~Template::Nest~ visit:
 https://metacpan.org/pod/Template::Nest
 
-Note: This module was created by me as a proof-of-concept to benchmark
-against ~Template::Nest::XS~. Tom Gracey (virtual.blue) is currently
-sponsoring for the development of this module. He authored
-~Template::Nest~ originally in Perl 5.
+Note: This module was created by me as a proof-of-concept to benchmark against
+~Template::Nest::XS~. Tom Gracey (virtual.blue) is currently sponsoring for the
+development of this module. He authored ~Template::Nest~ originally in Perl 5.
+
+Note: ~Template::Nest::XS~ is the recommended module for use in production.
+Considerable effort has gone into optimising ~Template::Nest::XS~, and it is now
+blindingly fast. Make sure to use the latest version (v0.1.9 at the time of
+writing), as some instabilities have recently been resolved.
+
+As a pure Raku version, you may also find this module (Template::Nest::Fast)
+useful for development/testing purposes - as e.g. a full stack trace can be
+obtained from it (unlike the XS version which is more of a black box). There may
+be other circumstances where this module is useful. However be aware it is
+approx 25 times slower than the XS version.
+
+It is not recommended to use the original pure Raku version of ~Template::Nest~.
+This module was a line by line rewrite of the Perl 5 module - which
+unfortunately turned out to be far too slow to be practical.
 
 ** Options
 

@@ -201,7 +201,7 @@ class Template::Nest::Fast {
         given $var {
             # trim-trailing to account for files ending on new line.
             when Hash { return self.render($var, $level + 1).trim-trailing }
-            when List { return $var.map({self!parse($_, $level + 1)}).join }
+            when List|Seq { return $var.map({self!parse($_, $level + 1)}).join }
             default { return $var.Str }
         }
     }

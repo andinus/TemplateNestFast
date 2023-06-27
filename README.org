@@ -420,6 +420,10 @@ Output:
 
 * News
 
+** v0.2.8 - 2023-06-27
+
++ Bug Fix: Earlier Seq was rendered as Str, now it is considered a List.
+
 ** v0.2.6 - 2023-05-29
 
 + Improve error message for die-on-bad-params.

@@ -197,11 +197,11 @@ class Template::Nest::Fast {
     #|
     #| parse here consumes 'xyz' and returns 'hi', it can also handle keys where
     #| the value is another Hash or a List.
-    method !parse($var, Int $level! --> Str) {
+    method !parse($var) {
         given $var {
             # trim-trailing to account for files ending on new line.
-            when Hash { return self.render($var, $level + 1).trim-trailing }
-            when List|Seq { return $var.map({self!parse($_, $level + 1)}).join }
+            when Hash { return self.render($var).trim-trailing }
+            when List|Seq { return $var.map({self!parse($_)}).join }
             default { return $var.Str }
         }
     }
@@ -218,12 +218,12 @@ class Template::Nest::Fast {
     }
 
     #| render method renders the template, given a template hash or list of
-    #| template hash. $level sets the indent level.
-    multi method render(List $t, Int $level = 0 --> Str) {
-        return self!parse($t, $level);
+    #| template hash.
+    multi method render(List $t) {
+        return self!parse($t);
     }
 
-    multi method render(%t, Int $level = 0 --> Str) {
+    multi method render(%t) {
         die "Encountered hash with no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
 
         # If the template is not indexed already then index if it exists when
@@ -282,7 +282,7 @@ class Template::Nest::Fast {
                     # replace them with empty string. If they exist in
                     # %!defaults then use those instead.
                     my Str $append = (%t{%v<name>}:exists)
-                                         ?? self!parse(%t{%v<name>}, $level)
+                                         ?? self!parse(%t{%v<name>})
                                          !! self!get-default-value(%v<name>);
 
                     if $!fixed-indent == True {

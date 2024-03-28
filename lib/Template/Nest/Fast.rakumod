@@ -197,7 +197,7 @@ class Template::Nest::Fast {
     #|
     #| parse here consumes 'xyz' and returns 'hi', it can also handle keys where
     #| the value is another Hash or a List.
-    method !parse($var) {
+    method !parse($var --> Str) {
         given $var {
             # trim-trailing to account for files ending on new line.
             when Hash { return self.render($var).trim-trailing }
@@ -219,11 +219,11 @@ class Template::Nest::Fast {
 
     #| render method renders the template, given a template hash or list of
     #| template hash.
-    multi method render(List $t) {
+    multi method render(List $t --> Str) {
         return self!parse($t);
     }
 
-    multi method render(%t) {
+    multi method render(%t --> Str) {
         die "Encountered hash with no name-label [$!name-label]: {%t.gist}" without %t{$!name-label};
 
         # If the template is not indexed already then index if it exists when

@@ -1,7 +1,7 @@
 {
     "name" : "Template::Nest::Fast",
     "auth" : "zef:andinus",
-    "version" : "0.2.8",
+    "version" : "0.3.0",
     "description" : "Template::Nest::Fast is a high-performance template engine module for Raku",
     "authors" : [ "Andinus <andinus@nand.sh>" ],
     "license" : "ISC",

@@ -124,7 +124,7 @@ class Template::Nest::Fast {
 
                     # token can be at the beginning of file and that might cause
                     # substr() to fail so we first check for range.
-                    if (.chars > 0 && $escape-char-start-pos > 0
+                    if (.chars > 0 && $escape-char-start-pos >= 0
                         && $f.substr($escape-char-start-pos, .chars) eq $_) {
                         # vars that have token-escape-char set as True are
                         # simply removed before render.

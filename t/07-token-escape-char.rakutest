@@ -1,7 +1,7 @@
 use Test;
 use Template::Nest::Fast;
 
-plan 2;
+plan 3;
 
 my IO $output-dir = $*PROGRAM.IO.parent.add('output');
 my IO $template-dir = $*PROGRAM.IO.parent.add('templates');
@@ -33,4 +33,14 @@ is(
     $nest.render(%var-at-begin),
     $output-dir.add('10-var-at-begin.html').slurp,
     "Template is rendered with token escaping and variable at file begin."
+);
+
+my %var-at-begin-with-escape = %(
+    TEMPLATE => '03-var-at-begin-with-escape',
+);
+
+is(
+    $nest.render(%var-at-begin-with-escape),
+    $output-dir.add('10-var-at-begin-with-escape.html').slurp,
+    "Template is rendered with token escaping and escaped variable at file begin."
 );
